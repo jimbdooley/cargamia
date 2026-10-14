@@ -1,2 +1,30 @@
+#FreeCAD
+*.FCBak
+*.FCStd1
+
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets / local config
 .env
-node_modules
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
