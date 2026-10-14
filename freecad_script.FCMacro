@@ -1,0 +1,24 @@
+import sys, runpy
+import FreeCAD as App
+import FreeCADGui as Gui
+
+PROJECT = r"C:\Users\james\Documents\misc_projects\cargamia"
+scripts = [
+    r"\test_wedge.py",
+]
+SCRIPT = PROJECT + scripts[0]
+
+sys.path.insert(0, PROJECT)
+for name, mod in list(sys.modules.items()):
+    if (getattr(mod, "__file__", None) or "").startswith(PROJECT):
+        del sys.modules[name]
+
+res = runpy.run_path(SCRIPT, run_name="__main__")
+
+Part.show(res["rtnPart"])
+
+App.ActiveDocument.recompute()
+
+Gui.ActiveDocument = Gui.getDocument(res["docName"])   # make the GUI doc active
+App.setActiveDocument(res["docName"])
+Gui.ActiveDocument.ActiveView.fitAll()
