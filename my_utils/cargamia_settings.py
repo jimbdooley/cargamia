@@ -32,16 +32,16 @@ class CargamiaSettings:
         self.plrThickness = self.minThickness
         self.plrDZ = 0.5
         self.plrMidLen = 6
-        self.plrEdgeLen = 5
+        self.plrEdgeLen = 6
         self.plrMidSocketLen = 4
         self.plrEdgeSocketLen = 3
         self.plrSocketDepth = 4.5
-        self.plrFoldAngle = 35
-        self.plrSocketDraftAngle = 4
+        self.plrFoldAngle = 40
+        self.plrSocketDraftAngle = 3
 
         self.portDraftAngle = self.plrSocketDraftAngle
-        self.portDraftSlope = math.tan(self.portDraftAngle)
-        self.portFoldAngle = self.plrFoldAngle + 2.5
+        self.portDraftSlope = math.tan(math.radians(self.portDraftAngle))
+        self.portFoldAngle = self.plrFoldAngle - 2.5
         self.portExpand = 0.25
         self.portH = 2 * self.plrSocketDepth + self.plrDZ
         self.portMidThickness = self.baseThickness
@@ -53,6 +53,7 @@ class CargamiaSettings:
         self.portBotWidth = self.portTopWidth + self.portH * 2 * self.defaultSlope
         self.portLocRad = 2 + 0.7071 * self.innerSqDim + 0.5 * self.portBotWidth
         self.portSideChamferRad = 0.45 * self.portTopWidth
+        self.portTopChamferRad = 0.49 * self.portTopThickness
 
 
 STGS = CargamiaSettings()

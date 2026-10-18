@@ -8,7 +8,7 @@ import math
 def getVertPort(i):
     pad = 2
     midPad = 0
-    edgeLen = STGS.plrEdgeLen + STGS.portTopThickness
+    edgeLen = STGS.plrEdgeLen - 1 + STGS.portTopThickness
     center = make_wedge_cen_z_up(
         STGS.portBotWidth, 2 * midPad + STGS.plrMidLen,
         STGS.portH,
@@ -47,4 +47,12 @@ def getVertPort(i):
 
     center = center.cut(cutter)
     sideEdges = [12, 18, 32, 48, 49, 50, 51, 52]
+    center = bulk_fillet(App.ActiveDocument, center, STGS.portSideChamferRad, sideEdges)
+    topEdges = [
+        6, 8, 10, 23, 29, 
+        30, 31, 32, 34, 36, 
+        46, 61, 62, 63, 64,
+        65, 66, 67
+    ]
+    center = bulk_fillet(App.ActiveDocument, center, STGS.portTopChamferRad, topEdges)
     return center
