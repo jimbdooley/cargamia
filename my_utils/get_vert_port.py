@@ -54,5 +54,5 @@ def getVertPort(i):
         46, 61, 62, 63, 64,
         65, 66, 67
     ]
-    center = bulk_fillet(App.ActiveDocument, center, STGS.portTopChamferRad, topEdges)
+    #center = bulk_fillet(App.ActiveDocument, center, STGS.portTopChamferRad, topEdges)
     return center

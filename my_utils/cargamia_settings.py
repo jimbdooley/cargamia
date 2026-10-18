@@ -25,9 +25,18 @@ class CargamiaSettings:
         self.baseDimPlusTaper = self.baseDim +2 * self.minThickness * self.defaultSlope
         
         self.defaultTrackH = 5 * self.marbleDiam / 11
-        self.trackBotZ = self.baseThickness + 3
+        self.trackBotZ = self.baseThickness + 2
         self.trackRad = (0.6 + self.marbleDiam) / 2
         self.dz = self.trackBotZ + self.marbleDiamMax + 1.5
+
+        self.gripH = 6
+        self.gripL = 5
+        self.gripW = 2.2
+        self.gripGap = 21
+        self.gripFilRadConcave = 0.2
+        self.gripDEdge = 3
+        self.gripDraftAngle = 1.5
+        self.gripDraftSlope = math.tan(math.radians(self.gripDraftAngle))
 
         self.plrThickness = self.minThickness
         self.plrDZ = 0.5

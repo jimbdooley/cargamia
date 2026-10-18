@@ -1,13 +1,36 @@
-def bulk_fillet(doc, shape, radius, edge_numbers, radius2=None):
+def _edge_numbers(shape, edges_or_numbers):
+    """Convert a mix of 1-based edge numbers and Part.Edge objects
+    into a list of 1-based edge numbers for `shape`."""
+    nums = []
+    for item in edges_or_numbers:
+        if isinstance(item, int):
+            nums.append(item)
+            continue
+        for i, e in enumerate(shape.Edges, start=1):
+            if e.isSame(item):
+                nums.append(i)
+                break
+        else:
+            raise ValueError("Edge is not part of the given shape")
+    return sorted(set(nums))   # drop duplicates
+
+
+def bulk_fillet(doc, shape, radius, edges, radius2=None):
     """
     Fillet several edges of `shape` in one operation using Part::Fillet.
 
-    edge_numbers are 1-based, matching the GUI's "Edge29" naming
-    (i.e. shape.Edges[28]).
+    `edges` is a list of 1-based edge numbers (GUI "Edge29" naming,
+    i.e. shape.Edges[28]), Part.Edge objects belonging to `shape`,
+    or a mix of both.
     Returns a new, document-independent Part.Shape.
     """
     if radius2 is None:
         radius2 = radius
+
+    edge_numbers = _edge_numbers(shape, edges)
+    if not edge_numbers:
+        print(f"bulk_fillet: no edges given (radius {radius}), shape unchanged")
+        return shape.copy()
 
     src = doc.addObject("Part::Feature", "_bf_src")
     src.Shape = shape
@@ -18,7 +41,7 @@ def bulk_fillet(doc, shape, radius, edge_numbers, radius2=None):
         doc.recompute()
         if not fil.isValid() or fil.Shape.isNull():
             raise RuntimeError(
-                f"bulk_fillet failed for edges {list(edge_numbers)} (radius {radius})"
+                f"bulk_fillet failed for edges {edge_numbers} (radius {radius})"
             )
         return fil.Shape.copy()
     finally:
