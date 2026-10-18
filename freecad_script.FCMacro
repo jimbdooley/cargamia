@@ -5,15 +5,20 @@ import FreeCADGui as Gui
 PROJECT = r"C:\Users\james\Documents\misc_projects\cargamia"
 scripts = [
     r"\test_wedge.py",
+    r"\base_square.py",
 ]
-SCRIPT = PROJECT + scripts[0]
+SCRIPT = PROJECT + scripts[1]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
     if (getattr(mod, "__file__", None) or "").startswith(PROJECT):
         del sys.modules[name]
 
-res = runpy.run_path(SCRIPT, run_name="__main__")
+res = runpy.run_path(
+    SCRIPT, 
+    init_globals={"__makeMold__": True},
+    run_name="__main__"
+)
 
 Part.show(res["rtnPart"])
 
