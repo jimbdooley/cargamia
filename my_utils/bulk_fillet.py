@@ -40,8 +40,9 @@ def bulk_fillet(doc, shape, radius, edges, radius2=None):
         fil.Edges = [(n, radius, radius2) for n in edge_numbers]
         doc.recompute()
         if not fil.isValid() or fil.Shape.isNull():
+            msg = "invalid fillet" if not fil.isValid() else "null fillet"
             raise RuntimeError(
-                f"bulk_fillet failed for edges {edge_numbers} (radius {radius})"
+                f"bulk_fillet failed for edges {edge_numbers} (radius {radius}): {msg}"
             )
         return fil.Shape.copy()
     finally:

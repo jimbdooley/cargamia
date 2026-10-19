@@ -5,7 +5,6 @@ import math
 from my_utils.cargamia_settings import STGS
 from my_utils.wedge_centered_zup import make_wedge_cen_z_up
 
-makeMold = globals().get("__makeMold__", False)
 docName = "wedge_test23"
 try:
     doc = App.getDocument(docName)
@@ -36,25 +35,19 @@ torus2.Placement.move(App.Vector(-torusBigRad,-torusBigRad, STGS.trackBotZ + STG
 box = box.cut(torus)
 
 __fillets__ = [49, 55, 69, 70, 71, 72, 73, 74, 75]
-#box = box.makeFillet(STGS.fltRadTrack, [box.Edges[i] for i in __fillets__])
 
-if not makeMold:
-    cutInnerLen = STGS.innerSqDim + 2 * (STGS.defaultSlope - 1) * STGS.minThickness
-    cutOuterLen = cutInnerLen + 2 * STGS.defaultSlope * wedgeH
-    cutWedge = make_wedge_cen_z_up(
-        cutOuterLen, cutOuterLen, wedgeH,
-        cutInnerLen, cutInnerLen
-    )
-    cutWedge.translate(App.Vector(0, 0, -STGS.baseThickness))
-    cutWedge = cutWedge.cut(torus2)
+cutInnerLen = STGS.innerSqDim + 2 * (STGS.defaultSlope - 1) * STGS.minThickness
+cutOuterLen = cutInnerLen + 2 * STGS.defaultSlope * wedgeH
+cutWedge = make_wedge_cen_z_up(
+    cutOuterLen, cutOuterLen, wedgeH,
+    cutInnerLen, cutInnerLen
+)
+cutWedge.translate(App.Vector(0, 0, -STGS.baseThickness))
+cutWedge = cutWedge.cut(torus2)
 
-    box = box.cut(cutWedge)
+box = box.cut(cutWedge)
 
 
-if makeMold:
-    mold = Part.makeBox(2 * STGS.baseDim, 2 * STGS.baseDim, 3 * STGS.marbleDiamMax)
-    mold.Placement.move(App.Vector(-STGS.baseDim, -STGS.baseDim, 0.05))
-    box = mold.cut(box)
 
 rtnPart = box
 

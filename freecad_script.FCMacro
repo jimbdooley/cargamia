@@ -6,8 +6,9 @@ PROJECT = r"C:\Users\james\Documents\misc_projects\cargamia"
 scripts = [
     r"\test_wedge.py",
     r"\base_square.py",
+    r"\sqp_double_right.py",
 ]
-SCRIPT = PROJECT + scripts[1]
+SCRIPT = PROJECT + scripts[2]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
@@ -16,7 +17,7 @@ for name, mod in list(sys.modules.items()):
 
 res = runpy.run_path(
     SCRIPT, 
-    init_globals={"__makeMold__": True},
+    init_globals={"__makeMold__": False},
     run_name="__main__"
 )
 

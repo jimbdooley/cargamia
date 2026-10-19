@@ -7,14 +7,52 @@ from my_utils.get_port_cut import getPortCut
 from my_utils.edges_in_plane import edges_in_plane
 from my_utils.add_debug_points import add_debug_points
 from my_utils.add_grips_to_sq import add_grips_to_sq
+from my_utils.cache_sq import get_cached_shapes, store_cached_shapes, CACHE_NAMES
 import FreeCAD as App
 import Part
 import math
 
-def make_base_square(doc, makeMold):
-        
+def get_base_square(doc):
+    """
+    for obj in list(doc.Objects):
+        if obj.Name in CACHE_NAMES: continue
+        doc.removeObject(obj.Name)
+
+    cached_shapes = get_cached_shapes(doc)
+    if cached_shapes is not None:
+        sq, botCut, midFuse = cached_shapes
+    else:
+        sq, botCut, midFuse = make_base_square(doc)
+        store_cached_shapes(doc, (sq, botCut, midFuse))
+
+    return sq, botCut, midFuse
+    """
+    sq, botCut, midFuse = make_base_square(doc)
+    return sq, botCut, midFuse
+
+def _get_bot_dims():
     wedgeH = STGS.defaultTrackH + STGS.trackBotZ
     wedgeBaseDxy = wedgeH * STGS.defaultSlope
+    botCutTopW = STGS.innerSqDim - 2 * STGS.minThickness / math.cos(math.radians(STGS.defaultDraftAngle))
+    botCutBotW = botCutTopW + 2 * wedgeBaseDxy
+    return wedgeH, wedgeBaseDxy, botCutTopW, botCutBotW
+
+def trim_cut_bot_base_square(doc, prt):
+    wedgeH, wedgeBaseDxy, botCutTopW, botCutBotW = _get_bot_dims()
+    perimR = botCutBotW / 2 + 0.1
+    perim = []
+    for i in range(4):
+        signX = 1 if i < 2 else -1
+        signY = 1 if i == 0 or i == 3 else -1
+        perim.append((signX * perimR, signY * perimR))
+    edgesToFil = edges_in_plane(prt, 0, (perim,), ())
+    rad = min(0.85 * (STGS.trackBotZ - STGS.minThickness), STGS.fltRadConvex)
+    prt = bulk_fillet(doc, prt, rad, edgesToFil)
+    return prt
+
+def make_base_square(doc):
+        
+    wedgeH, wedgeBaseDxy, botCutTopW, botCutBotW = _get_bot_dims()
     wedgeDim = STGS.innerSqDim + 2 * wedgeBaseDxy
     box = make_wedge_cen_z_up(wedgeDim, wedgeDim, wedgeH, STGS.innerSqDim, STGS.innerSqDim)
     box = bulk_fillet(doc, box, STGS.fltRadConvex, [2, 3, 4, 6, 7, 8, 11, 12])
@@ -74,21 +112,12 @@ def make_base_square(doc, makeMold):
     box = add_grips_to_sq(doc, box)
 
 
+    for cutters in topBotCutters:
+        box = box.cut(cutters[1])
+    box = box.removeSplitter()
+    edgesToFil3 = edges_in_plane(box, 0, (baseCenPerim,  ) , (cenPerim,))
+    box = bulk_fillet(doc, box, 0.25 * STGS.fltRadConvex, edgesToFil3)
 
-    if makeMold:
-        mold = Part.makeBox(2 * STGS.baseDim, 2 * STGS.baseDim, 3 * STGS.marbleDiamMax)
-        mold.Placement.move(App.Vector(-STGS.baseDim, -STGS.baseDim, 0.05))
-        box = mold.cut(box)
-
-    else:
-        for cutters in topBotCutters:
-            box = box.cut(cutters[1])
-        box = box.removeSplitter()
-        edgesToFil3 = edges_in_plane(box, 0, (baseCenPerim,  ) , (cenPerim,))
-        box = bulk_fillet(doc, box, 0.25 * STGS.fltRadConvex, edgesToFil3)
-
-    botCutTopW = STGS.innerSqDim - 2 * STGS.minThickness / math.cos(math.radians(STGS.defaultDraftAngle))
-    botCutBotW = botCutTopW + 2 * wedgeBaseDxy
     botCut = make_wedge_cen_z_up(
         botCutBotW, botCutBotW, wedgeH,
         botCutTopW, botCutTopW

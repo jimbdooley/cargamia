@@ -5,7 +5,6 @@ from my_utils.bulk_fillet import bulk_fillet
 import FreeCAD as App
 import Part
 
-makeMold = globals().get("__makeMold__", False)
 docName = "base_square"
 try:
     doc = App.getDocument(docName)
@@ -15,7 +14,7 @@ except:
 for obj in list(doc.Objects):
     doc.removeObject(obj.Name)
 
-sq, botCut = make_base_square(doc, makeMold)
+sq, botCut, midFuse = make_base_square(doc)
 rtnPart = sq.cut(botCut)
 
 

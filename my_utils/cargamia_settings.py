@@ -5,6 +5,8 @@ class CargamiaSettings:
         self.marbleDiam = 11
         self.marbleDiamMax = 13
         self.minThickness = 1.6
+        self.wallThickness = self.minThickness
+        self.baseThickness = self.wallThickness
         self.defaultDraftAngle = 3
             
         self.defaultDraftRad = self.defaultDraftAngle * math.pi / 180
@@ -15,8 +17,6 @@ class CargamiaSettings:
         self.baseDimOutwards = 6
         self.baseCornerRad = 8 * self.marbleDiam / 11
         
-        self.wallThickness = self.minThickness
-        self.baseThickness = self.wallThickness
         self.fltRadConcave = 0.5 * self.wallThickness
         self.fltRadConvex = 1.5 * self.wallThickness
         self.fltRadTrack = 1.0
