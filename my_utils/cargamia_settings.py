@@ -2,15 +2,21 @@ import math
 
 class CargamiaSettings:
     def __init__(self):
+        self.gap = 80
         self.marbleDiam = 11
         self.marbleDiamMax = 13
         self.minThickness = 1.6
         self.wallThickness = self.minThickness
         self.baseThickness = self.wallThickness
         self.defaultDraftAngle = 3
-            
-        self.defaultDraftRad = self.defaultDraftAngle * math.pi / 180
+        self.defaultDraftRad = math.radians(self.defaultDraftAngle)
         self.defaultSlope = math.tan(self.defaultDraftRad)
+        self.defaultTrackH = 5 * self.marbleDiam / 11
+        self.trackBotZ = self.baseThickness + 2
+        self.trackRadOld = (0.6 + self.marbleDiam) / 2
+        self.trackRad = (0.6 + self.marbleDiamMax) / 2
+        self.dz = self.trackBotZ + self.marbleDiamMax + 2.5
+        
         self.unitSquareDim = 50 * self.marbleDiam / 11
         self.baseDimInwards = 4 
         self.innerSqDim = self.unitSquareDim - 2 * self.baseDimInwards
@@ -24,10 +30,6 @@ class CargamiaSettings:
         self.baseDim = self.unitSquareDim + 2 * self.baseDimOutwards
         self.baseDimPlusTaper = self.baseDim +2 * self.minThickness * self.defaultSlope
         
-        self.defaultTrackH = 5 * self.marbleDiam / 11
-        self.trackBotZ = self.baseThickness + 2
-        self.trackRad = (0.6 + self.marbleDiam) / 2
-        self.dz = self.trackBotZ + self.marbleDiamMax + 1.5
 
         self.gripH = 6
         self.gripL = 5
@@ -38,15 +40,20 @@ class CargamiaSettings:
         self.gripDraftAngle = 1.5
         self.gripDraftSlope = math.tan(math.radians(self.gripDraftAngle))
 
+        self.brdgPastGrip = self.minThickness
+
         self.plrThickness = self.minThickness
         self.plrDZ = 0.5
         self.plrMidLen = 6
         self.plrEdgeLen = 6
         self.plrMidSocketLen = 4
-        self.plrEdgeSocketLen = 3
+        self.plrEdgeSocketLen = 4.5
         self.plrSocketDepth = 4.5
         self.plrFoldAngle = 40
+        self.plrFoldRads = math.radians(self.plrFoldAngle)
         self.plrSocketDraftAngle = 3
+        self.plrSocketDraftRads = math.radians(self.plrSocketDraftAngle)
+        self.plrSocketDraftSlope = math.tan(self.plrSocketDraftRads)
 
         self.portDraftAngle = self.plrSocketDraftAngle
         self.portDraftSlope = math.tan(math.radians(self.portDraftAngle))

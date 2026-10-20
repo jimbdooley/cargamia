@@ -1,5 +1,3 @@
-from matplotlib import use
-
 from my_utils.bulk_fillet import bulk_fillet
 from my_utils.bulk_chamfer import bulk_chamfer
 from my_utils.cargamia_settings import STGS

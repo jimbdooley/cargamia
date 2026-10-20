@@ -8,8 +8,12 @@ scripts = [
     r"\base_square.py",
     r"\sqp_double_right.py",
     r"\sqp_3_to_1.py",
+    r"\sqp_2_to_1_right_straight.py",
+    r"\plr_v0.py",
+    r"\simple_bridge_v0.py",
+    r"\v0_s_bridge.py",
 ]
-SCRIPT = PROJECT + scripts[3]
+SCRIPT = PROJECT + scripts[7]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
@@ -20,7 +24,8 @@ res = runpy.run_path(
     SCRIPT, 
     init_globals={
         "__makeMold__": False, 
-        "__useCache__": True
+        "__for3DPrint__": False,
+        "__useCache__": True,
     },
     run_name="__main__"
 )

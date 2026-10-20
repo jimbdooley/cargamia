@@ -6,6 +6,7 @@ import FreeCAD as App
 import Part
 
 useCache = globals().get("__useCache__", False)
+for3DPrint = globals().get("__for3DPrint__", False)
 docName = "double_right"
 try:
     doc = App.getDocument(docName)
@@ -32,38 +33,32 @@ for i in range(2):
     botCut = botCut.cut(torus2)
 
 
-sq = sq.cut(botCut)
-sq = trim_cut_bot_base_square(doc, sq)
 
 doc.recompute()
 
-try:
-    fltR1 = [1111, 1123, 1547, 1548, 1549, 1550, 1551, 1552]
-    sq =  bulk_fillet(doc, sq, STGS.fltRadTrack, fltR1)
-    fltR2 = [50, 204, 219, 222, 223, 224, 225, 226]
-    sq =  bulk_fillet(doc, sq, STGS.fltRadTrack, fltR2)
+if True:
     __fillets__ = []
-    __fillets__.append((1324,0.80,0.80))
-    __fillets__.append((1332,0.80,0.80))
-    __fillets__.append((1336,0.80,0.80))
-    __fillets__.append((1343,0.80,0.80))
-    __fillets__.append((1538,0.80,0.80))
-    __fillets__.append((1540,0.80,0.80))
-    __fillets__.append((1541,0.80,0.80))
-    __fillets__.append((1542,0.80,0.80))
-    __fillets__.append((1543,0.80,0.80))
-    __fillets__.append((1544,0.80,0.80))
-    __fillets__.append((1555,0.80,0.80))
-    __fillets__.append((1556,0.80,0.80))
-    __fillets__.append((1557,0.80,0.80))
-    __fillets__.append((1558,0.80,0.80))
-    __fillets__.append((1559,0.80,0.80))
-    __fillets__.append((1560,0.80,0.80))
+    __fillets__.append((1063,1.00,1.00))
+    __fillets__.append((1071,1.00,1.00))
+    __fillets__.append((1075,1.00,1.00))
+    __fillets__.append((1083,1.00,1.00))
+    __fillets__.append((1467,1.00,1.00))
+    __fillets__.append((1468,1.00,1.00))
+    __fillets__.append((1469,1.00,1.00))
+    __fillets__.append((1470,1.00,1.00))
+    __fillets__.append((1471,1.00,1.00))
+    __fillets__.append((1472,1.00,1.00))
+    __fillets__.append((1480,1.00,1.00))
+    __fillets__.append((1481,1.00,1.00))
+    __fillets__.append((1482,1.00,1.00))
+    __fillets__.append((1483,1.00,1.00))
+    __fillets__.append((1484,1.00,1.00))
+    __fillets__.append((1485,1.00,1.00))
     sq =  bulk_fillet(doc, sq, STGS.fltRadConcave, [e[0] for e in __fillets__])
     del __fillets__
-except Exception as e:
-    print(f"Error applying bulk fillet: {e}")
 
-
+if not for3DPrint:
+    sq = sq.cut(botCut)
+    sq = trim_cut_bot_base_square(doc, sq)
 
 rtnPart = sq
