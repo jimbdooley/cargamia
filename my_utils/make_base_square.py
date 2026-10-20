@@ -1,3 +1,5 @@
+from matplotlib import use
+
 from my_utils.bulk_fillet import bulk_fillet
 from my_utils.bulk_chamfer import bulk_chamfer
 from my_utils.cargamia_settings import STGS
@@ -12,22 +14,19 @@ import FreeCAD as App
 import Part
 import math
 
-def get_base_square(doc):
-    """
+def get_base_square(doc, useCache=False):
     for obj in list(doc.Objects):
-        if obj.Name in CACHE_NAMES: continue
+        if useCache and obj.Name in CACHE_NAMES: continue
         doc.removeObject(obj.Name)
 
-    cached_shapes = get_cached_shapes(doc)
+    cached_shapes = None if not useCache else get_cached_shapes(doc)
     if cached_shapes is not None:
         sq, botCut, midFuse = cached_shapes
     else:
         sq, botCut, midFuse = make_base_square(doc)
-        store_cached_shapes(doc, (sq, botCut, midFuse))
-
-    return sq, botCut, midFuse
-    """
-    sq, botCut, midFuse = make_base_square(doc)
+        if useCache:
+            store_cached_shapes(doc, (sq, botCut, midFuse))
+    
     return sq, botCut, midFuse
 
 def _get_bot_dims():

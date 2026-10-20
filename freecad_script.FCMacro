@@ -1,14 +1,15 @@
 import sys, runpy
 import FreeCAD as App
-import FreeCADGui as Gui
+import FreeCADGui
 
 PROJECT = r"C:\Users\james\Documents\misc_projects\cargamia"
 scripts = [
     r"\test_wedge.py",
     r"\base_square.py",
     r"\sqp_double_right.py",
+    r"\sqp_3_to_1.py",
 ]
-SCRIPT = PROJECT + scripts[2]
+SCRIPT = PROJECT + scripts[3]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
@@ -17,7 +18,10 @@ for name, mod in list(sys.modules.items()):
 
 res = runpy.run_path(
     SCRIPT, 
-    init_globals={"__makeMold__": False},
+    init_globals={
+        "__makeMold__": False, 
+        "__useCache__": True
+    },
     run_name="__main__"
 )
 
@@ -25,6 +29,6 @@ Part.show(res["rtnPart"])
 
 App.ActiveDocument.recompute()
 
-Gui.ActiveDocument = Gui.getDocument(res["docName"])   # make the GUI doc active
+FreeCADGui.ActiveDocument = FreeCADGui.getDocument(res["docName"]) 
 App.setActiveDocument(res["docName"])
-Gui.ActiveDocument.ActiveView.fitAll()
+FreeCADGui.ActiveDocument.ActiveView.fitAll()
