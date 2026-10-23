@@ -96,7 +96,6 @@ def getOcto_v2(for3DPrint):
     baseOcto = baseOcto.cut(platformCornerCutA)
     baseOcto = baseOcto.cut(platformCornerCutB)
     
-    baseOcto = baseOcto.removeSplitter()
 
     cenCut = make_octo_wedge_cen_z_up(STGS.inOctDim, STGS.inOctDim2, 
                                       STGS.baseThickness, -STGS.defaultSlope)
@@ -155,9 +154,24 @@ def getOcto_v2(for3DPrint):
             baseOcto = baseOcto.cut(slotCut)
             baseOcto = baseOcto.cut(pinsCut)
 
+        indentDepth = slotCutBotL - STGS.plrThickness
+        indentTopDepth = indentDepth
+        indentBotDepth = indentDepth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
+        indentTopW = STGS.minThickness + 2 * STGS.defaultSlope * STGS.plrPortDepth
+        indent = make_wedge_cen_z_up(
+            STGS.minThickness, indentBotDepth, STGS.plrPortDepth,
+            indentTopW, indentTopDepth
+        )
+        indent.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+        indentRad = rad - math.sqrt(0.5) * 0.5 * (STGS.plrSlotTopDepth - indentBotDepth)
+        for j in range(4):
+            indent.rotate(V(0, 0, 0), V(0, 0, 1), 90)
+            xSign = 1 if j < 2 else -1
+            ySign = 1 if j == 0 or j == 3 else -1
+            indent.Placement.Base = V(xSign * indentRad, ySign * indentRad, 0)
+            baseOcto = baseOcto.fuse(indent.copy())
     
-    
-    
+    baseOcto = baseOcto.removeSplitter()
     return baseOcto
 
 rtnPart = getOcto_v2(for3DPrint)
