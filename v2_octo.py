@@ -101,6 +101,31 @@ def getOcto_v2(for3DPrint):
     cenCut = make_octo_wedge_cen_z_up(STGS.inOctDim, STGS.inOctDim2, 
                                       STGS.baseThickness, -STGS.defaultSlope)
     baseOcto = baseOcto.cut(cenCut)
+    cenWedgeBotW = STGS.inOctSlotLen + 2 * STGS.defaultSlope * STGS.baseThickness
+    cenWedgeBotL = STGS.inOctDim + 2 * STGS.inOctSlotDepth
+    cenWedgeBotL += 2 * STGS.defaultSlope * STGS.baseThickness
+    cenWedgeCut = make_wedge_cen_z_up(
+        cenWedgeBotW, cenWedgeBotL, STGS.baseThickness,
+        STGS.inOctSlotLen, STGS.inOctDim + 2 * STGS.inOctSlotDepth
+    )
+    baseOcto = baseOcto.cut(cenWedgeCut)
+    cenWedgeCut.rotate(V(0, 0, 0), V(0, 0, 1), 90)
+    baseOcto = baseOcto.cut(cenWedgeCut)
+    for i in range(2):
+        if i == 1:
+            baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 90)
+        for xSign in [-1, 1]:
+            for ySign in [-1, 1]:
+                trackSlotCutBotL = STGS.trackSlotTopL + 2 * STGS.defaultSlope * STGS.baseThickness
+                trackSlotCutBotW = STGS.trackSlotTopW + 2 * STGS.defaultSlope * STGS.baseThickness
+                trackSlotCut = make_wedge_cen_z_up(
+                    trackSlotCutBotW, trackSlotCutBotL, STGS.baseThickness,
+                    STGS.trackSlotTopW, STGS.trackSlotTopL
+                )
+                xLoc = xSign * 0.5 * STGS.trackSlotTopGap
+                yLoc = ySign * STGS.trackSlotTopDist
+                trackSlotCut.translate(V(xLoc, yLoc, 0))
+                baseOcto = baseOcto.cut(trackSlotCut)
     return baseOcto
 
 rtnPart = getOcto_v2(for3DPrint)
