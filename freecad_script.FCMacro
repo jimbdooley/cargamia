@@ -4,14 +4,14 @@ import FreeCADGui
 
 PROJECT = r"C:\Users\james\Documents\misc_projects\cargamia"
 scripts = [
-    r"\test_wedge.py",
-    r"\base_square.py",
     r"\sqp_double_right.py",
     r"\sqp_3_to_1.py",
     r"\sqp_2_to_1_right_straight.py",
     r"\plr_v0.py",
     r"\simple_bridge_v0.py",
     r"\v0_s_bridge.py",
+    r"\v2_pillar.py",
+    r"\v2_octo.py",
 ]
 SCRIPT = PROJECT + scripts[7]
 
@@ -24,7 +24,7 @@ res = runpy.run_path(
     SCRIPT, 
     init_globals={
         "__makeMold__": False, 
-        "__for3DPrint__": False,
+        "__for3DPrint__": True,
         "__useCache__": True,
     },
     run_name="__main__"

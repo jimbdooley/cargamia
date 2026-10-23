@@ -17,9 +17,10 @@ except:
 for obj in list(doc.Objects):
     doc.removeObject(obj.Name)
 
-def get_s_bridge(slotDelta=0):
-
-    sBridge = make_s_tube(STGS.gap-10, STGS.dz, 5, 
+def get_s_bridge(for3DPrint):
+    slotDelta = 0.35 if for3DPrint else 0
+    platformShrink = 0.35 if for3DPrint else 0
+    sBridge = make_s_tube(STGS.gap-18, STGS.dz, 9, 
                         STGS.trackRadOld + STGS.minThickness, 
                         STGS.trackRadOld,
                         STGS.defaultTrackH + STGS.minThickness)
@@ -28,12 +29,12 @@ def get_s_bridge(slotDelta=0):
 
     bridgeLatchWidth = STGS.gripGap + 5
     bridgeLatchLength = STGS.brdgPastGrip * 2 + STGS.gripL
-    bridgeLatch = Part.makeBox(bridgeLatchLength, bridgeLatchWidth, STGS.minThickness)
+    bridgeLatch = Part.makeBox(bridgeLatchLength, bridgeLatchWidth, STGS.minThickness - platformShrink)
     bridgeLatchX = 0.5 * STGS.gap - bridgeLatchLength + STGS.brdgPastGrip - STGS.gripDEdge
-    bridgeLatch.Placement.Base = App.Vector(bridgeLatchX, -0.5 * bridgeLatchWidth, STGS.baseThickness + STGS.dz)
+    bridgeLatch.Placement.Base = App.Vector(bridgeLatchX, -0.5 * bridgeLatchWidth, STGS.baseThickness + STGS.dz + platformShrink)
     sBridge = sBridge.fuse(bridgeLatch)
     bridgeLatch2 = bridgeLatch.copy()
-    bridgeLatch2.Placement.Base = App.Vector(-bridgeLatchX - bridgeLatchLength, -0.5 * bridgeLatchWidth, STGS.baseThickness)
+    bridgeLatch2.Placement.Base = App.Vector(-bridgeLatchX - bridgeLatchLength, -0.5 * bridgeLatchWidth, STGS.baseThickness + platformShrink)
     sBridge = sBridge.fuse(bridgeLatch2)
     latchSlotDX = STGS.gripL + 0.5 * STGS.gripH * STGS.gripDraftSlope + 2 * slotDelta
     latchSlotY0 = 0.5 * STGS.gripGap - 0.5 * STGS.gripW - 0.5 * STGS.gripH * STGS.gripDraftSlope
@@ -50,4 +51,4 @@ def get_s_bridge(slotDelta=0):
             sBridge = sBridge.cut(latchSlotCutterCopy)
     return sBridge
 
-rtnPart = get_s_bridge(0.5 if for3DPrint else 0)
+rtnPart = get_s_bridge(for3DPrint)
