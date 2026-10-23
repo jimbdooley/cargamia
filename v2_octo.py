@@ -126,6 +126,38 @@ def getOcto_v2(for3DPrint):
                 yLoc = ySign * STGS.trackSlotTopDist
                 trackSlotCut.translate(V(xLoc, yLoc, 0))
                 baseOcto = baseOcto.cut(trackSlotCut)
+    
+    #cut slot holes in pillar port
+    for i in range(2):
+        baseOcto.rotate(V(0, 0, 0.5 * STGS.octoH), V(0, 1, 0), 180)
+        slotCutBotW = STGS.plrSlotTopWidth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
+        slotCutBotL = STGS.plrSlotTopDepth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
+        pinsCutW = STGS.plrSlotTopWidth - 2 * STGS.plrSlotPinsarLen
+        pinsCutBotW = pinsCutW - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
+        slotCut = make_wedge_cen_z_up(
+            STGS.plrSlotTopWidth, STGS.plrSlotTopDepth, STGS.plrPortDepth,
+            slotCutBotW, slotCutBotL)
+        pinsCut = make_wedge_cen_z_up(
+            pinsCutW, STGS.plrSlotTopDepth, STGS.plrPortDepth,
+            pinsCutBotW, slotCutBotL)
+        rad = 0.25 * (STGS.octoDim + STGS.octoDim2) - math.sqrt(0.5) * 0.5 * STGS.plrPlatformDepth
+        rad -= math.sqrt(0.5) * STGS.octoH * STGS.defaultSlope
+        pinsRad = rad + slotCutBotL * math.sqrt(0.5)
+        slotCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+        pinsCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+        for j in range(4):
+            slotCut.rotate(V(0, 0, 0), V(0, 0, 1), 90)
+            pinsCut.rotate(V(0, 0, 0), V(0, 0, 1), 90)
+            xSign = 1 if j < 2 else -1
+            ySign = 1 if j == 0 or j == 3 else -1
+            slotCut.Placement.Base = V(xSign * rad, ySign * rad, 0)
+            pinsCut.Placement.Base = V(xSign * pinsRad, ySign * pinsRad, 0)
+            baseOcto = baseOcto.cut(slotCut)
+            baseOcto = baseOcto.cut(pinsCut)
+
+    
+    
+    
     return baseOcto
 
 rtnPart = getOcto_v2(for3DPrint)

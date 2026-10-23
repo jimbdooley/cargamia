@@ -32,6 +32,12 @@ class CargamiaSettingsV2:
         self.plrPlatformWidth = self.plrWidth + 2 * self.pillarPortTopEdgeThickness + 1.25
         self.plrPlatformDepth = 4 * self.minThickness
         self.plrPlatformEdgeB4Corner = 2.25 * self.minThickness
+        self.plrSlotDraftAngle = 3
+        self.plrSlotDraftRad = math.radians(self.plrSlotDraftAngle)
+        self.plrSlotSlope = math.tan(self.plrSlotDraftRad)
+        self.plrSlotTopWidth = self.plrPlatformWidth - 2 * self.pillarPortTopEdgeThickness
+        self.plrSlotTopDepth = self.plrPlatformDepth - 2 * self.minThickness
+        self.plrSlotPinsarLen = 3.5
 
         self.octoDim = 52
         self.octoH = 2 * self.plrPortDepth + self.plrZGap
