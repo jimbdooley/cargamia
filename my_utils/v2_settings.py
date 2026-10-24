@@ -7,23 +7,23 @@ class CargamiaSettingsV2:
         self.marbleDiam = 11
         self.marbleDiamMax = 13
         self.minThickness = 1.6
+        self.trackThickness = 1.4
         self.pillarPortTopEdgeThickness = 1.3
         self.wallThickness = self.minThickness
         self.baseThickness = self.wallThickness
         self.defaultDraftAngle = 6
         self.defaultDraftRad = math.radians(self.defaultDraftAngle)
         self.defaultSlope = math.tan(self.defaultDraftRad)
+        self.octoEnterAngle = 6
+        self.octoEnterDraftRad = math.radians(self.octoEnterAngle)
+        self.octoEnterSlope = math.tan(self.octoEnterDraftRad)
         self.defaultTrackH = 5 * self.marbleDiam / 11
         self.trackBotZ = self.baseThickness + 2.2
         self.trackBotZInc = self.trackBotZ + 0.8
         self.trackBotZOut = self.trackBotZ - 0.5
 
-        self.trackRad = (2 + self.marbleDiamMax) / 2
+        self.trackRad = (1 + self.marbleDiamMax) / 2
         self.dz = self.trackBotZ + self.marbleDiamMax + 1.5
-
-        self.crnFlttnDraftAngle = 4
-        self.crnFlttnDraftRad = math.radians(self.crnFlttnDraftAngle)
-        self.crnFlttnSlope = math.tan(self.crnFlttnDraftRad)
 
         self.plrZGap = self.minThickness
         self.plrThickness = 25.4 / 16
@@ -31,7 +31,7 @@ class CargamiaSettingsV2:
         self.plrPortDepth = 4.5
         self.plrPlatformWidth = self.plrWidth + 2 * self.pillarPortTopEdgeThickness + 1.25
         self.plrPlatformDepth = 4 * self.minThickness
-        self.plrPlatformEdgeB4Corner = 2.25 * self.minThickness
+        self.plrPlatformEdgeB4Corner = 3 * self.minThickness
         self.plrSlotDraftAngle = 3
         self.plrSlotDraftRad = math.radians(self.plrSlotDraftAngle)
         self.plrSlotSlope = math.tan(self.plrSlotDraftRad)
@@ -45,11 +45,15 @@ class CargamiaSettingsV2:
         self.octoDimTop = self.octoDim - 2 * self.octoDimDiff
         self.octoCornerDim = self.plrPlatformWidth + 2 * self.octoDimDiff * math.tan(math.pi/8)
         self.octoDim2 = self.octoDim - self.octoCornerDim * math.sqrt(2) 
+        self.centerSlotH = 2 * self.baseThickness
+        self.centerSlotDepth = 1 * self.baseThickness
+        self.centerGuideH = 0.6 * self.minThickness
+        self.centerGuideAngle = 15
 
-        self.inOctDim = 26
-        self.inOctDim2 = 13
+        self.inOctDim = 27
+        self.inOctDim2 = 10
         self.inOctSlotLen = 10
-        self.inOctSlotDepth = 3
+        self.inOctSlotDepth = 2
 
         self.trackSlotTopW = self.minThickness + 0.2
         self.trackSlotTopL = 5

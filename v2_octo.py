@@ -1,5 +1,8 @@
 from my_utils.make_base_square import get_base_square, trim_cut_bot_base_square
+from my_utils.bulk_fillet import bulk_fillet
 from my_utils.v2_settings import STGS
+from my_utils.v2_octo_center_ops import octo_center_ops_v2
+from my_utils.v2_shape_pillar_port import shape_pillar_port_v2
 from my_utils.wedge_centered_zup import make_wedge_cen_z_up
 from my_utils.make_oct_wedge_cen_z_up import make_octo_wedge_cen_z_up
 import FreeCAD as App
@@ -17,22 +20,24 @@ except:
 for obj in list(doc.Objects):
     doc.removeObject(obj.Name)
 
-def getOcto_v2(for3DPrint):
+def getOcto_v2(for3DPrint, slopeFromBot=False):
     octoTopW = STGS.octoDim - STGS.octoH * 2 * STGS.defaultSlope
     octoSlabDim = STGS.octoDim + 4
     baseOcto = Part.makeBox(octoSlabDim, octoSlabDim, STGS.octoH)
     baseOcto.translate(V(-0.5 * octoSlabDim, -0.5 * octoSlabDim, 0))
 
+    draftCutterH = STGS.baseThickness if slopeFromBot else STGS.octoH
     draftCutterDim = STGS.octoDim + 10
-    draftCutterTopDim = draftCutterDim - 2 * STGS.defaultSlope * STGS.baseThickness
+    draftCutterTopDim = draftCutterDim - (0 if not slopeFromBot else 2 * draftCutterH * STGS.defaultSlope)
+    draftCutterBotDim = draftCutterDim - (0 if slopeFromBot else 2 * draftCutterH * STGS.defaultSlope)
     draftCutter0 = make_wedge_cen_z_up(
-        draftCutterDim, draftCutterDim, STGS.baseThickness, 
+        draftCutterBotDim, draftCutterBotDim, draftCutterH, 
         draftCutterTopDim, draftCutterTopDim)
     for i in range(4):
         xSign = [-1, 1, 0, 0][i]
         ySign = [0, 0, -1, 1][i]
-        xLoc = xSign * 0.5 * (STGS.octoDim + draftCutterTopDim)
-        yLoc = ySign * 0.5 * (STGS.octoDim + draftCutterTopDim)
+        xLoc = xSign * 0.5 * (STGS.octoDim + draftCutterDim - 2 * draftCutterH * STGS.defaultSlope)
+        yLoc = ySign * 0.5 * (STGS.octoDim + draftCutterDim - 2 * draftCutterH * STGS.defaultSlope)
         draftCutter0.Placement.Base = V(xLoc, yLoc, 0)
         baseOcto = baseOcto.cut(draftCutter0)
 
@@ -50,8 +55,9 @@ def getOcto_v2(for3DPrint):
         for ySign in [-1, 1]:
             octoCornerCutter.Placement.Base = V(xSign * cutLoc, ySign * cutLoc, 0)
             baseOcto = baseOcto.cut(octoCornerCutter)
-            octoCornerCutter2.Placement.Base = V(xSign * cutLoc, ySign * cutLoc, 0)
-            baseOcto = baseOcto.cut(octoCornerCutter2)
+            if slopeFromBot:
+                octoCornerCutter2.Placement.Base = V(xSign * cutLoc, ySign * cutLoc, 0)
+                baseOcto = baseOcto.cut(octoCornerCutter2)
 
     octoBotCornerDist = math.sqrt(2) * 0.25 * (STGS.octoDim + STGS.octoDim2)
     octoBotCornerDist -= STGS.octoH * STGS.defaultSlope
@@ -82,7 +88,7 @@ def getOcto_v2(for3DPrint):
 
     cornerFlattenDim = edgeCutDim * math.sqrt(0.5)
     cornerFlattenDim -= math.sqrt(2) * STGS.plrPlatformEdgeB4Corner
-    cornerFlattenDimBot = cornerFlattenDim - 2 * STGS.crnFlttnSlope * (STGS.octoH - STGS.baseThickness)
+    cornerFlattenDimBot = cornerFlattenDim - 2 * STGS.octoEnterSlope * (STGS.octoH - STGS.baseThickness)
     platformCornerCutA = make_wedge_cen_z_up(
         cornerFlattenDimBot, 2 * STGS.octoDim, STGS.octoH - STGS.baseThickness,
         cornerFlattenDim, 2 * STGS.octoDim
@@ -97,81 +103,18 @@ def getOcto_v2(for3DPrint):
     baseOcto = baseOcto.cut(platformCornerCutB)
     
 
-    cenCut = make_octo_wedge_cen_z_up(STGS.inOctDim, STGS.inOctDim2, 
-                                      STGS.baseThickness, -STGS.defaultSlope)
-    baseOcto = baseOcto.cut(cenCut)
-    cenWedgeBotW = STGS.inOctSlotLen + 2 * STGS.defaultSlope * STGS.baseThickness
-    cenWedgeBotL = STGS.inOctDim + 2 * STGS.inOctSlotDepth
-    cenWedgeBotL += 2 * STGS.defaultSlope * STGS.baseThickness
-    cenWedgeCut = make_wedge_cen_z_up(
-        cenWedgeBotW, cenWedgeBotL, STGS.baseThickness,
-        STGS.inOctSlotLen, STGS.inOctDim + 2 * STGS.inOctSlotDepth
-    )
-    baseOcto = baseOcto.cut(cenWedgeCut)
-    cenWedgeCut.rotate(V(0, 0, 0), V(0, 0, 1), 90)
-    baseOcto = baseOcto.cut(cenWedgeCut)
-    for i in range(2):
-        if i == 1:
-            baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 90)
-        for xSign in [-1, 1]:
-            for ySign in [-1, 1]:
-                trackSlotCutBotL = STGS.trackSlotTopL + 2 * STGS.defaultSlope * STGS.baseThickness
-                trackSlotCutBotW = STGS.trackSlotTopW + 2 * STGS.defaultSlope * STGS.baseThickness
-                trackSlotCut = make_wedge_cen_z_up(
-                    trackSlotCutBotW, trackSlotCutBotL, STGS.baseThickness,
-                    STGS.trackSlotTopW, STGS.trackSlotTopL
-                )
-                xLoc = xSign * 0.5 * STGS.trackSlotTopGap
-                yLoc = ySign * STGS.trackSlotTopDist
-                trackSlotCut.translate(V(xLoc, yLoc, 0))
-                baseOcto = baseOcto.cut(trackSlotCut)
     
-    #cut slot holes in pillar port
-    for i in range(2):
-        baseOcto.rotate(V(0, 0, 0.5 * STGS.octoH), V(0, 1, 0), 180)
-        slotCutBotW = STGS.plrSlotTopWidth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
-        slotCutBotL = STGS.plrSlotTopDepth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
-        pinsCutW = STGS.plrSlotTopWidth - 2 * STGS.plrSlotPinsarLen
-        pinsCutBotW = pinsCutW - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
-        slotCut = make_wedge_cen_z_up(
-            STGS.plrSlotTopWidth, STGS.plrSlotTopDepth, STGS.plrPortDepth,
-            slotCutBotW, slotCutBotL)
-        pinsCut = make_wedge_cen_z_up(
-            pinsCutW, STGS.plrSlotTopDepth, STGS.plrPortDepth,
-            pinsCutBotW, slotCutBotL)
-        rad = 0.25 * (STGS.octoDim + STGS.octoDim2) - math.sqrt(0.5) * 0.5 * STGS.plrPlatformDepth
-        rad -= math.sqrt(0.5) * STGS.octoH * STGS.defaultSlope
-        pinsRad = rad + slotCutBotL * math.sqrt(0.5)
-        slotCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
-        pinsCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
-        for j in range(4):
-            slotCut.rotate(V(0, 0, 0), V(0, 0, 1), 90)
-            pinsCut.rotate(V(0, 0, 0), V(0, 0, 1), 90)
-            xSign = 1 if j < 2 else -1
-            ySign = 1 if j == 0 or j == 3 else -1
-            slotCut.Placement.Base = V(xSign * rad, ySign * rad, 0)
-            pinsCut.Placement.Base = V(xSign * pinsRad, ySign * pinsRad, 0)
-            baseOcto = baseOcto.cut(slotCut)
-            baseOcto = baseOcto.cut(pinsCut)
+    baseOcto = shape_pillar_port_v2(doc, baseOcto)
 
-        indentDepth = slotCutBotL - STGS.plrThickness
-        indentTopDepth = indentDepth
-        indentBotDepth = indentDepth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
-        indentTopW = STGS.minThickness + 2 * STGS.defaultSlope * STGS.plrPortDepth
-        indent = make_wedge_cen_z_up(
-            STGS.minThickness, indentBotDepth, STGS.plrPortDepth,
-            indentTopW, indentTopDepth
-        )
-        indent.rotate(V(0, 0, 0), V(0, 0, 1), 45)
-        indentRad = rad - math.sqrt(0.5) * 0.5 * (STGS.plrSlotTopDepth - indentBotDepth)
-        for j in range(4):
-            indent.rotate(V(0, 0, 0), V(0, 0, 1), 90)
-            xSign = 1 if j < 2 else -1
-            ySign = 1 if j == 0 or j == 3 else -1
-            indent.Placement.Base = V(xSign * indentRad, ySign * indentRad, 0)
-            baseOcto = baseOcto.fuse(indent.copy())
-    
+
+    baseOcto = octo_center_ops_v2(doc, baseOcto)
+
+    # misc final things
     baseOcto = baseOcto.removeSplitter()
+    marbleCheck = Part.makeCylinder(8.4, 100)
+    marbleCheck.rotate(V(0, 0, 0), V(0, 1, 0), 90)
+    marbleCheck.Placement.Base = V(-50, 0, 11)
+    #baseOcto = baseOcto.fuse(marbleCheck)
     return baseOcto
 
-rtnPart = getOcto_v2(for3DPrint)
+rtnPart = getOcto_v2(for3DPrint, True)
