@@ -114,6 +114,7 @@ def getOcto_v2(for3DPrint, slopeFromBot=False):
     marbleCheck = Part.makeCylinder(8.4, 100)
     marbleCheck.rotate(V(0, 0, 0), V(0, 1, 0), 90)
     marbleCheck.Placement.Base = V(-50, 0, 11)
+    baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
     #baseOcto = baseOcto.fuse(marbleCheck)
     return baseOcto
 

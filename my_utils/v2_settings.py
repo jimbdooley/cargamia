@@ -50,7 +50,7 @@ class CargamiaSettingsV2:
         self.centerGuideH = 0.6 * self.minThickness
         self.centerGuideAngle = 15
 
-        self.inOctDim = 27
+        self.inOctDim = 28
         self.inOctDim2 = 10
         self.inOctSlotLen = 10
         self.inOctSlotDepth = 2

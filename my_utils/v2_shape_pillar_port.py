@@ -38,9 +38,9 @@ def shape_pillar_port_v2(doc, baseOcto):
             baseOcto = baseOcto.cut(pinsCut)
 
         indentDepth = slotCutBotL - STGS.plrThickness
-        indentTopDepth = indentDepth
-        indentBotDepth = indentDepth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
-        indentTopW = STGS.minThickness + 2 * STGS.defaultSlope * STGS.plrPortDepth
+        indentTopDepth = indentDepth + 2 * STGS.plrSlotSlope * STGS.plrPortDepth
+        indentBotDepth = indentDepth
+        indentTopW = STGS.minThickness + 2 * STGS.plrSlotSlope * STGS.plrPortDepth
         indent = make_wedge_cen_z_up(
             STGS.minThickness, indentBotDepth, STGS.plrPortDepth,
             indentTopW, indentTopDepth
