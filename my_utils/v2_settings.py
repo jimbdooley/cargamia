@@ -12,15 +12,16 @@ class CargamiaSettingsV2:
         self.wallThickness = self.minThickness
         self.baseThickness = self.wallThickness
         self.defaultDraftAngle = 6
-        self.defaultDraftRad = math.radians(self.defaultDraftAngle)
-        self.defaultSlope = math.tan(self.defaultDraftRad)
+        self.defaultSlope = math.tan(math.radians(self.defaultDraftAngle))
         self.octoEnterAngle = 6
-        self.octoEnterDraftRad = math.radians(self.octoEnterAngle)
-        self.octoEnterSlope = math.tan(self.octoEnterDraftRad)
-        self.defaultTrackH = 5 * self.marbleDiam / 11
-        self.trackBotZ = self.baseThickness + 2.2
-        self.trackBotZInc = self.trackBotZ + 0.8
-        self.trackBotZOut = self.trackBotZ - 0.5
+        self.octoEnterSlope = math.tan(math.radians(self.octoEnterAngle))
+        self.octoCenterCutAngle = 12
+        self.octoCenterCutSlope = math.tan(math.radians(self.octoCenterCutAngle))
+        self.defaultTrackH = 5
+        self.squareTrackH = 5
+        self.trackBotZ = self.baseThickness + 1.4 + self.minThickness
+        self.trackBotZInc = self.trackBotZ + 0.7
+        self.trackBotZOut = self.trackBotZ - 0.4
 
         self.trackRad = (1 + self.marbleDiamMax) / 2
         self.dz = self.trackBotZ + self.marbleDiamMax + 1.5
@@ -49,16 +50,23 @@ class CargamiaSettingsV2:
         self.centerSlotDepth = 1 * self.baseThickness
         self.centerGuideH = 0.6 * self.minThickness
         self.centerGuideAngle = 15
+        self.octoEdgeTrim = 0.5
 
-        self.inOctDim = 28
-        self.inOctDim2 = 10
-        self.inOctSlotLen = 10
+        self.inOctDim = 29
+        self.inOctDim2 = 9
+        self.inOctSlotLen = 9
         self.inOctSlotDepth = 2
 
-        self.trackSlotTopW = self.minThickness + 0.2
-        self.trackSlotTopL = 5
-        self.trackSlotTopGap = 16
-        self.trackSlotTopDist = 0.5 * self.octoDim - 0.5 * self.trackSlotTopL - 2.5
+        self.trackSquareTopDim = 32
+        self.trackSquareDim = self.trackSquareTopDim
+        self.trackSquareDim += 2 * self.baseThickness * self.defaultSlope
+
+        self.trackSlotAngle = 8
+        self.trackSlotSlope = math.tan(math.radians(self.trackSlotAngle))
+        self.trackSlotTopDepth = 5
+        self.trackSlotTopWidth = 2.9
+        self.trackSlotDistFromEdge = 3
+        self.trackSlotPeakZ = 5
 
         self.edgeCutTopDiag = self.octoDimTop - 2 * (0.5 ** 0.5) * self.plrPlatformWidth
         

@@ -10,12 +10,12 @@ import math
 
 def octo_center_ops_v2(doc, baseOcto):
     cenCut = make_octo_wedge_cen_z_up(STGS.inOctDim, STGS.inOctDim2, 
-                                      STGS.baseThickness, -STGS.defaultSlope)
+                                      STGS.baseThickness, -STGS.octoCenterCutSlope)
     baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
     baseOcto = baseOcto.cut(cenCut)
-    centerSlotBotDepth = STGS.centerSlotDepth + 2 * STGS.defaultSlope * STGS.centerSlotH
+    centerSlotBotDepth = STGS.centerSlotDepth + 2 * STGS.octoCenterCutSlope * STGS.centerSlotH
     centerSlotTopWidth = STGS.inOctSlotLen
-    centerSlotBotWidth = centerSlotTopWidth + 2 * STGS.defaultSlope * STGS.centerSlotH
+    centerSlotBotWidth = centerSlotTopWidth + 2 * STGS.octoCenterCutSlope * STGS.centerSlotH
     centerSlotWedge = make_wedge_cen_z_up(
         centerSlotBotWidth, centerSlotBotDepth, STGS.centerSlotH,
         centerSlotTopWidth, STGS.centerSlotDepth
@@ -44,9 +44,9 @@ def octo_center_ops_v2(doc, baseOcto):
         baseOcto = baseOcto.fuse(centerSlotGuide.copy())
         centerSlotGuide.Placement.Base = V(-0.5 * centerSlotLen, -centerSlotDist, STGS.centerSlotH)
         baseOcto = baseOcto.fuse(centerSlotGuide.copy())
-    cenWedgeBotW = STGS.inOctSlotLen + 2 * STGS.defaultSlope * STGS.centerSlotH
+    cenWedgeBotW = STGS.inOctSlotLen + 2 * STGS.octoCenterCutSlope * STGS.centerSlotH
     cenWedgeBotL = STGS.inOctDim + 2 * STGS.inOctSlotDepth
-    cenWedgeBotL += 2 * STGS.defaultSlope * STGS.centerSlotH
+    cenWedgeBotL += 2 * STGS.octoCenterCutSlope * STGS.centerSlotH
     cenWedgeCut = make_wedge_cen_z_up(
         cenWedgeBotW, cenWedgeBotL, STGS.centerSlotH,
         STGS.inOctSlotLen, STGS.inOctDim + 2 * STGS.inOctSlotDepth

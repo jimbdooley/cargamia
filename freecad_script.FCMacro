@@ -12,8 +12,9 @@ scripts = [
     r"\v0_s_bridge.py",
     r"\v2_pillar.py",
     r"\v2_octo.py",
+    r"\v2_centrack_dub_right.py",
 ]
-SCRIPT = PROJECT + scripts[7]
+SCRIPT = PROJECT + scripts[8]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):

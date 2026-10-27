@@ -1,10 +1,12 @@
 from my_utils.make_base_square import get_base_square, trim_cut_bot_base_square
 from my_utils.bulk_fillet import bulk_fillet
+from my_utils.v2_center_track_utils import make_main_shell
 from my_utils.v2_settings import STGS
 from my_utils.v2_octo_center_ops import octo_center_ops_v2
 from my_utils.v2_shape_pillar_port import shape_pillar_port_v2
 from my_utils.wedge_centered_zup import make_wedge_cen_z_up
 from my_utils.make_oct_wedge_cen_z_up import make_octo_wedge_cen_z_up
+from my_utils.v2_cut_track_io_slots import cut_track_io_slots_v2
 import FreeCAD as App
 import Part
 V = App.Vector
@@ -33,9 +35,7 @@ def getOcto_v2(for3DPrint, slopeFromBot=False):
     draftCutter0 = make_wedge_cen_z_up(
         draftCutterBotDim, draftCutterBotDim, draftCutterH, 
         draftCutterTopDim, draftCutterTopDim)
-    for i in range(4):
-        xSign = [-1, 1, 0, 0][i]
-        ySign = [0, 0, -1, 1][i]
+    for xSign, ySign in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         xLoc = xSign * 0.5 * (STGS.octoDim + draftCutterDim - 2 * draftCutterH * STGS.defaultSlope)
         yLoc = ySign * 0.5 * (STGS.octoDim + draftCutterDim - 2 * draftCutterH * STGS.defaultSlope)
         draftCutter0.Placement.Base = V(xLoc, yLoc, 0)
@@ -51,8 +51,7 @@ def getOcto_v2(for3DPrint, slopeFromBot=False):
     cutLoc = STGS.octoDim2/2
     cutLoc += 0.5 * octoDim2HalfDif
     cutLoc += octoTopW * math.sqrt(2) / 4
-    for xSign in [-1, 1]:
-        for ySign in [-1, 1]:
+    for xSign, ySign in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
             octoCornerCutter.Placement.Base = V(xSign * cutLoc, ySign * cutLoc, 0)
             baseOcto = baseOcto.cut(octoCornerCutter)
             if slopeFromBot:
@@ -78,13 +77,19 @@ def getOcto_v2(for3DPrint, slopeFromBot=False):
         edgeCutDim, edgeCutDim
     )
     edgeCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
-    for i in range(4):
-        xSign = [-1, 1, 0, 0][i]
-        ySign = [0, 0, -1, 1][i]
-        cutX = xSign * (0.5 * STGS.octoDimTop + math.sqrt(0.125) * edgeCutDim)
-        cutY = ySign * (0.5 * STGS.octoDimTop + math.sqrt(0.125) * edgeCutDim)
+    edgeCutDist = 0.5 * STGS.octoDimTop + math.sqrt(0.125) * edgeCutDim
+    for xSign, ySign in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        cutX = xSign * edgeCutDist
+        cutY = ySign * edgeCutDist
         edgeCut.Placement.Base = V(cutX, cutY, STGS.baseThickness)
         baseOcto = baseOcto.cut(edgeCut)
+
+    """
+    centerSquareY = -x + math.sqrt(0.5) * topCutDim
+    edgeSquareY = x + edgeCutDist - math.sqrt(0.5) * edgeCutDim
+    """
+    pathSlotX = (math.sqrt(0.5) * (topCutDim + edgeCutDim) - edgeCutDist) / 2
+    pathSlotY = pathSlotX + edgeCutDist - math.sqrt(0.5) * edgeCutDim
 
     cornerFlattenDim = edgeCutDim * math.sqrt(0.5)
     cornerFlattenDim -= math.sqrt(2) * STGS.plrPlatformEdgeB4Corner
@@ -102,20 +107,59 @@ def getOcto_v2(for3DPrint, slopeFromBot=False):
     baseOcto = baseOcto.cut(platformCornerCutA)
     baseOcto = baseOcto.cut(platformCornerCutB)
     
-
-    
     baseOcto = shape_pillar_port_v2(doc, baseOcto)
-
-
+    
     baseOcto = octo_center_ops_v2(doc, baseOcto)
+
+    plrP1 = (0.5 * cornerFlattenDimBot, STGS.baseThickness)
+    plrP2 = (0.5 * cornerFlattenDim, STGS.octoH)
+    baseOcto = cut_track_io_slots_v2(doc, baseOcto, pathSlotY, plrP1, plrP2)
+
+    edgeTrim = make_wedge_cen_z_up(
+        STGS.octoDim, 
+        STGS.octoDim, 
+        STGS.octoH,
+        STGS.octoDim - 2 * STGS.defaultSlope * STGS.octoH, 
+        STGS.octoDim - 2 * STGS.defaultSlope * STGS.octoH,
+    )
+    edgeTrimRad = STGS.octoDim - STGS.octoEdgeTrim - STGS.defaultSlope * STGS.baseThickness
+    for xySign in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        xLoc = xySign[0] * edgeTrimRad
+        yLoc = xySign[1] * edgeTrimRad
+        edgeTrim.Placement.Base = V(xLoc, yLoc, 0)
+        baseOcto = baseOcto.cut(edgeTrim)
+
+    finalNotchDim = 15
+    finalNotch = make_octo_wedge_cen_z_up(
+        finalNotchDim, 4, STGS.baseThickness, -STGS.defaultSlope)
+    fnDist = 0.5 * (STGS.octoDim + finalNotchDim - STGS.octoEdgeTrim) - 4.5
+    for xSign, ySign in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        finalNotch.Placement.Base = V(xSign * fnDist, ySign * fnDist, 0)
+        baseOcto = baseOcto.cut(finalNotch)
 
     # misc final things
     baseOcto = baseOcto.removeSplitter()
-    marbleCheck = Part.makeCylinder(8.4, 100)
+    trackOutRad = STGS.trackRad + STGS.trackThickness
+    marbleCheck = Part.makeCylinder(trackOutRad, 100)
     marbleCheck.rotate(V(0, 0, 0), V(0, 1, 0), 90)
-    marbleCheck.Placement.Base = V(-50, 0, 11)
-    baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+    marbleCheckCutter = make_wedge_cen_z_up(500, 500, 500, 500, 500)
+    marbleCheckCutter.translate(V(0, 0, -trackOutRad + STGS.defaultTrackH + STGS.trackThickness))
+    marbleCheck = marbleCheck.cut(marbleCheckCutter)
+    marbleCheck.Placement.Base = V(-50, 0, trackOutRad + STGS.trackBotZ - STGS.trackThickness)
     #baseOcto = baseOcto.fuse(marbleCheck)
+    #baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
     return baseOcto
 
-rtnPart = getOcto_v2(for3DPrint, True)
+octo = getOcto_v2(for3DPrint, True)
+
+if False:
+    main_shell = make_main_shell(doc)
+    cut = Part.makeTorus(STGS.trackSquareDim / 2, STGS.trackRad)
+    cutZ = STGS.trackRad + STGS.trackBotZ
+    cut.Placement.Base = V(-STGS.trackSquareDim / 2, -STGS.trackSquareDim / 2, cutZ)
+    main_shell = main_shell.cut(cut)
+    cut.Placement.Base = V(STGS.trackSquareDim / 2, STGS.trackSquareDim / 2, cutZ)
+    main_shell = main_shell.cut(cut)
+    octo = octo.fuse(main_shell)
+
+rtnPart = octo
