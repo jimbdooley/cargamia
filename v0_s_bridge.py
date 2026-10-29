@@ -23,7 +23,7 @@ def get_s_bridge(for3DPrint):
     sBridge = make_s_tube(STGS.gap-18, STGS.dz, 9, 
                         STGS.trackRadOld + STGS.minThickness, 
                         STGS.trackRadOld,
-                        STGS.defaultTrackH + STGS.minThickness)
+                        STGS.defaultTrackH + STGS.minThickness, [])
     sBridgeDZ = STGS.trackBotZ + STGS.trackRadOld
     sBridge.translate(V(-0.5 * STGS.gap, 0, sBridgeDZ))
 

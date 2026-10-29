@@ -3,7 +3,7 @@ import math
 class CargamiaSettingsV2:
     def __init__(self):
         
-        self.gap = 66
+        self.gap = 77
         self.marbleDiam = 11
         self.marbleDiamMax = 13
         self.minThickness = 1.6
@@ -21,7 +21,7 @@ class CargamiaSettingsV2:
         self.squareTrackH = 5
         self.trackBotZ = self.baseThickness + 1.4 + self.minThickness
         self.trackBotZInc = self.trackBotZ + 0.7
-        self.trackBotZOut = self.trackBotZ - 0.4
+        self.trackBotZOut = self.trackBotZ - 0.7
 
         self.trackRad = (1 + self.marbleDiamMax) / 2
         self.dz = self.trackBotZ + self.marbleDiamMax + 1.5
@@ -69,6 +69,29 @@ class CargamiaSettingsV2:
         self.trackSlotPeakZ = 5
 
         self.edgeCutTopDiag = self.octoDimTop - 2 * (0.5 ** 0.5) * self.plrPlatformWidth
+
+    def getPathSlotDist(self): # from center
+        octoBotCornerDist = math.sqrt(2) * 0.25 * (self.octoDim + self.octoDim2)
+        octoBotCornerDist -= self.octoH * self.defaultSlope
+        topCutDim = 2 * octoBotCornerDist - 2 * self.plrPlatformDepth
+        edgeCutDim = 2 * self.edgeCutTopDiag * math.sqrt(0.5)
+        edgeCutDist = 0.5 * self.octoDimTop + math.sqrt(0.125) * edgeCutDim
+        pathSlotX = (math.sqrt(0.5) * (topCutDim + edgeCutDim) - edgeCutDist) / 2
+        pathSlotY = pathSlotX + edgeCutDist - math.sqrt(0.5) * edgeCutDim
+        return pathSlotY
+    
+    def getPathB(self): # from each other
+        edgeCutDim = 2 * self.edgeCutTopDiag * math.sqrt(0.5)
+        cornerFlattenDim = edgeCutDim * math.sqrt(0.5)
+        cornerFlattenDim -= math.sqrt(2) * self.plrPlatformEdgeB4Corner
+        cornerFlattenDimBot = cornerFlattenDim - 2 * self.octoEnterSlope * (self.octoH - self.baseThickness)
+        plrP1 = (0.5 * cornerFlattenDimBot, self.baseThickness)
+        plrP2 = (0.5 * cornerFlattenDim, self.octoH)
+        plrDz = plrP2[1] - plrP1[1]
+        plrXAtPeakZ = plrP1[0] + (self.trackSlotPeakZ - plrP1[1]) * (plrP2[0] - plrP1[0]) / plrDz
+        
+        interceptB =  self.trackSlotPeakZ + plrXAtPeakZ / self.trackSlotSlope
+        return interceptB
         
 
 STGS = CargamiaSettingsV2()

@@ -18,7 +18,7 @@ for obj in list(doc.Objects):
     doc.removeObject(obj.Name)
 
 def getPillar_v2(for3DPrint, n):
-    thickness = STGS.plrThickness * (0.6 if for3DPrint else 1)
+    thickness = STGS.plrThickness * (1 if for3DPrint else 1)
     plrHeight = n * STGS.dz - STGS.plrZGap
     rtn = Part.makeBox(STGS.plrWidth, thickness, plrHeight)  # Example placeholder for the pillar part
     return rtn

@@ -7,7 +7,7 @@ import Part
 V = App.Vector
 import math
 
-def cut_track_io_slots_v2(doc, baseOcto, pathSlotY, plrP1, plrP2):
+def cut_track_io_slots_v2(doc, baseOcto, pathSlotY):
     slotBotWidth = STGS.trackSlotTopWidth + 2 * STGS.baseThickness * STGS.trackSlotSlope
     slotBotDepth = STGS.trackSlotTopDepth + 2 * STGS.baseThickness * STGS.defaultSlope
     slotTopWidth = slotBotWidth - 1.5 * STGS.octoH * STGS.trackSlotSlope
@@ -16,22 +16,9 @@ def cut_track_io_slots_v2(doc, baseOcto, pathSlotY, plrP1, plrP2):
         slotBotWidth, slotBotDepth, 0.75*STGS.octoH,
         slotTopWidth, slotTopDepth
     )
-    trackSlotPeakZ = STGS.trackSlotPeakZ
-    if math.isclose(STGS.trackSlotSlope, 0.0, abs_tol=1e-9):
-        raise ValueError("trackSlotSlope must be nonzero to calculate the line intercept.")
-    trackSlotLineSlope = 1 / STGS.trackSlotSlope
-    plrDz = plrP2[1] - plrP1[1]
-    if math.isclose(plrDz, 0.0, abs_tol=1e-9):
-        if not math.isclose(plrP1[1], trackSlotPeakZ, abs_tol=1e-9):
-            raise ValueError("The PLR line does not intersect trackSlotPeakZ.")
-        raise ValueError("The PLR line overlaps trackSlotPeakZ; interceptB is not unique.")
-
-    plrXAtPeakZ = plrP1[0] + (trackSlotPeakZ - plrP1[1]) * (
-        (plrP2[0] - plrP1[0]) / plrDz
-    )
-    interceptB = trackSlotPeakZ + trackSlotLineSlope * plrXAtPeakZ
-    yForXDist = trackSlotLineSlope * 0.5 * slotBotWidth
-    xDist = (yForXDist - interceptB) / (-trackSlotLineSlope)
+    interceptB = STGS.getPathB()
+    yForXDist = 0.5 * slotBotWidth/ STGS.trackSlotSlope
+    xDist = (yForXDist - interceptB) * -STGS.trackSlotSlope
     for _rot in range(2):
         baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 90)
         for xSign, ySign in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:

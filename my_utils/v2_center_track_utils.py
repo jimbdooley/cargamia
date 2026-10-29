@@ -7,11 +7,19 @@ import Part
 V = App.Vector
 import math
 
-def make_main_shell(doc):
-    h = STGS.trackBotZ + STGS.squareTrackH
+def get_base_wedge(hScale=1.0):
+    h = hScale * (STGS.trackBotZ + STGS.squareTrackH)
     botW = STGS.trackSquareDim
     topW = botW - 2 * STGS.defaultSlope * h
     base = make_wedge_cen_z_up( botW, botW, h, topW, topW )
+    return base, h, botW, topW
+
+def make_main_shell(doc):
+    base, h, botW, topW = get_base_wedge(1.0)
+    cutDiff = STGS.minThickness / math.cos(math.radians(STGS.defaultDraftAngle))
+    cBotW = botW - 2 * cutDiff
+    cTopW = topW - 2 * cutDiff + 2 * STGS.minThickness * STGS.defaultSlope
+    baseCut = make_wedge_cen_z_up(cBotW, cBotW, h - STGS.minThickness, cTopW, cTopW)
 
     cornerTopDist = 0.5 * STGS.inOctDim + STGS.inOctSlotDepth
     cornerBotDist = cornerTopDist + STGS.octoCenterCutSlope * STGS.centerSlotH
@@ -24,11 +32,18 @@ def make_main_shell(doc):
         cornerCutterTopDim, cornerCutterTopDim
     )
     cornerCutter.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+    cornerCutDiff = STGS.minThickness / math.cos(math.radians(STGS.octoCenterCutAngle))
+    cutRad = math.sqrt(0.5) * (cornerDist + 0.5 * cornerCutterBotDim)
     for xSign in [-1, 1]:
         for ySign in [-1, 1]:
-            xLoc = xSign * math.sqrt(0.5) * (cornerDist + 0.5 * cornerCutterBotDim)
-            yLoc = ySign * math.sqrt(0.5) * (cornerDist + 0.5 * cornerCutterBotDim)
+            xLoc = xSign * cutRad
+            yLoc = ySign * cutRad
             cornerCutter.Placement.Base = V(xLoc, yLoc, 0)
             base = base.cut(cornerCutter)
-
-    return base
+            xLoc = xSign * (cutRad - math.sqrt(0.5) * cornerCutDiff)
+            yLoc = ySign * (cutRad - math.sqrt(0.5) * cornerCutDiff)
+            cornerCutter.Placement.Base = V(xLoc, yLoc, 0)
+            baseCut = baseCut.cut(cornerCutter)
+            
+    
+    return base, baseCut

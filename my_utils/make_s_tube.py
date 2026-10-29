@@ -2,7 +2,7 @@ import FreeCAD as App
 import Part
 import math
 V = App.Vector
-def make_s_tube(dx, dz, dStraights, r_out, r_in=0.0, bottomToKeep=None, name=None):
+def make_s_tube(dx, dz, dStraights, r_out, r_in, bottomToKeep, toFuse):
     """
     bottomToKeep  if given (and < outer diameter), everything more than this
                   distance above the bottom of the outer radius is cut away,
@@ -53,6 +53,8 @@ def make_s_tube(dx, dz, dStraights, r_out, r_in=0.0, bottomToKeep=None, name=Non
         return Part.Wire(Part.makeCircle(radius, p0, V(1, 0, 0)))
 
     tube = sweep(circle_profile(r_out))
+    for obj in toFuse:
+        tube = tube.fuse(obj)
     if r_in > 0:
         tube = tube.cut(sweep(circle_profile(r_in)))
 
@@ -67,14 +69,11 @@ def make_s_tube(dx, dz, dStraights, r_out, r_in=0.0, bottomToKeep=None, name=Non
         ])
         tube = tube.cut(sweep(cutter_profile))
 
+
     tube = tube.removeSplitter()
 
     if not tube.isValid():
         App.Console.PrintWarning("Resulting tube is not a valid solid.\n")
 
-    if name:
-        doc = App.ActiveDocument or App.newDocument()
-        Part.show(tube, name)
-        doc.recompute()
 
     return tube

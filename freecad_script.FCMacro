@@ -13,8 +13,9 @@ scripts = [
     r"\v2_pillar.py",
     r"\v2_octo.py",
     r"\v2_centrack_dub_right.py",
+    r"\v2_s_curve.py",
 ]
-SCRIPT = PROJECT + scripts[8]
+SCRIPT = PROJECT + scripts[9]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
@@ -25,16 +26,20 @@ res = runpy.run_path(
     SCRIPT, 
     init_globals={
         "__makeMold__": False, 
-        "__for3DPrint__": True,
+        "__for3DPrint__": False,
         "__useCache__": True,
     },
     run_name="__main__"
 )
 
 Part.show(res["rtnPart"])
+if SCRIPT == PROJECT + scripts[9] and "octoA" in res and "octoB" in res:
+    Part.show(res["octoA"])
+    Part.show(res["octoB"])
 
 App.ActiveDocument.recompute()
 
 FreeCADGui.ActiveDocument = FreeCADGui.getDocument(res["docName"]) 
 App.setActiveDocument(res["docName"])
 FreeCADGui.ActiveDocument.ActiveView.fitAll()
+
