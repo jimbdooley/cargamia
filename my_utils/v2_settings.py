@@ -67,6 +67,9 @@ class CargamiaSettingsV2:
         self.trackSlotTopWidth = 2.9
         self.trackSlotDistFromEdge = 3
         self.trackSlotPeakZ = 5
+        self.trackClawBuffer = 0.4
+        self.clawOverhang = 0.6
+        self.clawBotExtra = 1.8
 
         self.edgeCutTopDiag = self.octoDimTop - 2 * (0.5 ** 0.5) * self.plrPlatformWidth
 
