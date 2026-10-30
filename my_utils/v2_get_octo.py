@@ -48,13 +48,11 @@ def getOcto_v2(doc, for3DPrint, slopeFromBot=False):
                 octoCornerCutter2.Placement.Base = V(xSign * cutLoc, ySign * cutLoc, 0)
                 baseOcto = baseOcto.cut(octoCornerCutter2)
 
-    octoBotCornerDist = math.sqrt(2) * 0.25 * (STGS.octoDim + STGS.octoDim2)
-    octoBotCornerDist -= STGS.octoH * STGS.defaultSlope
-    topCutDim = 2 * octoBotCornerDist - 2 * STGS.plrPlatformDepth
-    topCutBotDim = topCutDim - 2 * STGS.defaultSlope * (STGS.octoH - STGS.baseThickness)
+    
     topCut = make_wedge_cen_z_up(
-        topCutBotDim, topCutBotDim, STGS.octoH - STGS.baseThickness,
-        topCutDim, topCutDim
+        STGS.topCutBotDim, STGS.topCutBotDim, 
+        STGS.octoH - STGS.baseThickness,
+        STGS.topCutDim, STGS.topCutDim
     )
     topCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
     topCut.Placement.Base = V(0, 0, STGS.baseThickness)
@@ -131,7 +129,7 @@ def getOcto_v2(doc, for3DPrint, slopeFromBot=False):
     #baseOcto = baseOcto.fuse(marbleCheck)
     #baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
 
-    if True:
+    if False:
         main_shell, _ = make_main_shell(doc)
         cut = Part.makeTorus(STGS.trackSquareDim / 2, STGS.trackRad)
         cutZ = STGS.trackRad + STGS.trackBotZ

@@ -1,8 +1,8 @@
 import math
 
 class CargamiaSettingsV2:
-    def __init__(self):
-        
+    def __init__(self, mergeTopSlotIntoPillar=False):
+        self.mergeTopSlotIntoPillar = mergeTopSlotIntoPillar
         self.gap = 77
         self.marbleDiam = 11
         self.marbleDiamMax = 13
@@ -40,22 +40,36 @@ class CargamiaSettingsV2:
         self.plrSlotTopDepth = self.plrPlatformDepth - 2 * self.minThickness
         self.plrSlotPinsarLen = 3.1
 
+
         self.octoDim = 52
         self.octoH = 2 * self.plrPortDepth + self.plrZGap
         self.octoDimDiff = self.octoH * self.defaultSlope
         self.octoDimTop = self.octoDim - 2 * self.octoDimDiff
         self.octoCornerDim = self.plrPlatformWidth + 2 * self.octoDimDiff * math.tan(math.pi/8)
         self.octoDim2 = self.octoDim - self.octoCornerDim * math.sqrt(2) 
+        octoBotCornerDist = math.sqrt(2) * 0.25 * (self.octoDim + self.octoDim2)
+        octoBotCornerDist -= self.octoH * self.defaultSlope
+        self.topCutDim = 2 * octoBotCornerDist - 2 * self.plrPlatformDepth
+        self.topCutBotDim = self.topCutDim - 2 * self.defaultSlope * (self.octoH - self.baseThickness)
+
+    
         self.centerSlotH = 2 * self.baseThickness
         self.centerSlotDepth = 1 * self.baseThickness
         self.centerGuideH = 0.6 * self.minThickness
         self.centerGuideAngle = 15
         self.octoEdgeTrim = 0.5
-
+        intersectBotR = self.centerSlotH + 0.5 * self.minThickness - self.baseThickness
+        intersectBotR /= (self.octoH - self.baseThickness)
+        self.centerSlotDistTrg = 0.5 * (1 - intersectBotR) * self.topCutBotDim
+        self.centerSlotDistTrg += 0.5 * (intersectBotR) * self.topCutDim
+        print("centerSlotDistTrg:", self.centerSlotDistTrg)
         self.inOctDim = 29
         self.inOctDim2 = 9
         self.inOctSlotLen = 9
         self.inOctSlotDepth = 2
+        if self.mergeTopSlotIntoPillar:
+            self.inOctSlotDepth = self.centerSlotDistTrg
+            self.inOctSlotDepth -= 0.5 * (self.inOctDim + self.centerSlotDepth)
 
         self.trackSquareTopDim = 32
         self.trackSquareDim = self.trackSquareTopDim
@@ -97,4 +111,4 @@ class CargamiaSettingsV2:
         return interceptB
         
 
-STGS = CargamiaSettingsV2()
+STGS = CargamiaSettingsV2(True)

@@ -20,12 +20,23 @@ def octo_center_ops_v2(doc, baseOcto):
         centerSlotBotWidth, centerSlotBotDepth, STGS.centerSlotH,
         centerSlotTopWidth, STGS.centerSlotDepth
     )
-    centerSlotWedge = bulk_fillet(doc, centerSlotWedge, 0.5 * STGS.minThickness, [4, 8])
+    if not STGS.mergeTopSlotIntoPillar:
+        centerSlotWedge = bulk_fillet(doc, centerSlotWedge, 0.5 * STGS.minThickness, [4, 8])
     centerSlotDist = 0.5 * (STGS.inOctDim + STGS.centerSlotDepth) + STGS.inOctSlotDepth
-
-    centerSlotLen = STGS.inOctSlotLen - STGS.minThickness
+    print("centerSlotDist:", centerSlotDist)
+    centerSlotLen = STGS.inOctSlotLen - (0 if STGS.mergeTopSlotIntoPillar else STGS.minThickness)
     centerSlotGuide = Part.makeCylinder(0.5 * STGS.minThickness, centerSlotLen)
     centerSlotGuide.rotate(V(0, 0, 0), V(0, 1, 0), 90)
+    if STGS.mergeTopSlotIntoPillar:
+        sloperDim = 10
+        sloperTopDim = sloperDim + 2 * STGS.octoCenterCutSlope * STGS.minThickness
+        sloper = make_wedge_cen_z_up(
+            sloperDim, sloperDim, STGS.minThickness,
+            sloperTopDim, sloperTopDim)
+        sloper.Placement.Base = V(-0.5 * sloperDim, 0, 0)
+        centerSlotGuide = centerSlotGuide.cut(sloper)
+        sloper.Placement.Base = V(0.5 * sloperDim + centerSlotLen, 0, 0)
+        centerSlotGuide = centerSlotGuide.cut(sloper)
     guideSphere = Part.makeSphere(0.5 * STGS.minThickness)
     for i in range(2):
         baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 90)
@@ -35,8 +46,8 @@ def octo_center_ops_v2(doc, baseOcto):
         centerSlotWedge.rotate(V(0, -centerSlotDist, 0), V(0, 0, 1), 180)
         baseOcto = baseOcto.fuse(centerSlotWedge.copy())
         centerSlotWedge.rotate(V(0, -centerSlotDist, 0), V(0, 0, 1), 180)
-        for xSign in [-1, 1]:
-            for ySign in [-1, 1]:
+        for xSign, ySign in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
+            if not STGS.mergeTopSlotIntoPillar:
                 xLoc = xSign * 0.5 * centerSlotLen
                 guideSphere.Placement.Base = V(xLoc, ySign * centerSlotDist, STGS.centerSlotH)
                 baseOcto = baseOcto.fuse(guideSphere.copy())
@@ -44,6 +55,7 @@ def octo_center_ops_v2(doc, baseOcto):
         baseOcto = baseOcto.fuse(centerSlotGuide.copy())
         centerSlotGuide.Placement.Base = V(-0.5 * centerSlotLen, -centerSlotDist, STGS.centerSlotH)
         baseOcto = baseOcto.fuse(centerSlotGuide.copy())
+    
     cenWedgeBotW = STGS.inOctSlotLen + 2 * STGS.octoCenterCutSlope * STGS.centerSlotH
     cenWedgeBotL = STGS.inOctDim + 2 * STGS.inOctSlotDepth
     cenWedgeBotL += 2 * STGS.octoCenterCutSlope * STGS.centerSlotH
