@@ -14,8 +14,9 @@ scripts = [
     r"\v2_octo.py",
     r"\v2_centrack_dub_right.py",
     r"\v2_s_curve.py",
+    r"\v3_straight_right.py",
 ]
-SCRIPT = PROJECT + scripts[9]
+SCRIPT = PROJECT + scripts[10]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
@@ -33,9 +34,9 @@ res = runpy.run_path(
 )
 
 Part.show(res["rtnPart"])
-if SCRIPT == PROJECT + scripts[9] and "octoA" in res and "octoB" in res:
-    Part.show(res["octoA"])
-    Part.show(res["octoB"])
+for optPart in ["octoA", "octoB"]:
+    if optPart in res:
+        Part.show(res[optPart])
 
 App.ActiveDocument.recompute()
 

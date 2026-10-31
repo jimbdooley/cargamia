@@ -129,7 +129,7 @@ def getOcto_v2(doc, for3DPrint, slopeFromBot=False):
     #baseOcto = baseOcto.fuse(marbleCheck)
     #baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
 
-    if False:
+    if True:
         main_shell, _ = make_main_shell(doc)
         cut = Part.makeTorus(STGS.trackSquareDim / 2, STGS.trackRad)
         cutZ = STGS.trackRad + STGS.trackBotZ

@@ -4,6 +4,7 @@ class CargamiaSettingsV2:
     def __init__(self, mergeTopSlotIntoPillar=False):
         self.mergeTopSlotIntoPillar = mergeTopSlotIntoPillar
         self.gap = 77
+        self.sqrcParam = 3
         self.marbleDiam = 11
         self.marbleDiamMax = 13
         self.minThickness = 1.6
@@ -18,18 +19,22 @@ class CargamiaSettingsV2:
         self.octoCenterCutAngle = 12
         self.octoCenterCutSlope = math.tan(math.radians(self.octoCenterCutAngle))
         self.defaultTrackH = 5
-        self.squareTrackH = 5
-        self.trackBotZ = self.baseThickness + 1.4 + self.minThickness
-        self.trackBotZInc = self.trackBotZ + 0.7
-        self.trackBotZOut = self.trackBotZ - 0.7
+        self.squareTrackH = 6
+        self.trackBotZ = self.baseThickness + 1.1 + self.minThickness
+        self.trackBotZInc = self.trackBotZ + 0.5
+        self.trackBotZOut = self.trackBotZ - 0.5
 
-        self.trackRad = (1 + self.marbleDiamMax) / 2
+        self.trackRad = (0.5 + self.marbleDiamMax) / 2
+        self.warcleAngle = 6
+        self.warcleSlope = math.tan(math.radians(self.warcleAngle))
+        self.iWarcleRad = 1.75 * self.trackRad
+        self.oWarcleRad = self.iWarcleRad + self.minThickness
         self.dz = self.trackBotZ + self.marbleDiamMax + 1.5
 
         self.plrZGap = self.minThickness
         self.plrThickness = 25.4 / 16
         self.plrWidth = 13.5
-        self.plrPortDepth = 4.5
+        self.plrPortDepth = 5
         self.plrPlatformWidth = self.plrWidth + 2 * self.pillarPortTopEdgeThickness + 1.25
         self.plrPlatformDepth = 4 * self.minThickness
         self.plrPlatformEdgeB4Corner = 3 * self.minThickness
@@ -62,12 +67,12 @@ class CargamiaSettingsV2:
         intersectBotR /= (self.octoH - self.baseThickness)
         self.centerSlotDistTrg = 0.5 * (1 - intersectBotR) * self.topCutBotDim
         self.centerSlotDistTrg += 0.5 * (intersectBotR) * self.topCutDim
-        print("centerSlotDistTrg:", self.centerSlotDistTrg)
         self.inOctDim = 29
         self.inOctDim2 = 9
         self.inOctSlotLen = 9
         self.inOctSlotDepth = 2
         if self.mergeTopSlotIntoPillar:
+            self.inOctDim = 34
             self.inOctSlotDepth = self.centerSlotDistTrg
             self.inOctSlotDepth -= 0.5 * (self.inOctDim + self.centerSlotDepth)
 
@@ -77,13 +82,13 @@ class CargamiaSettingsV2:
 
         self.trackSlotAngle = 8
         self.trackSlotSlope = math.tan(math.radians(self.trackSlotAngle))
-        self.trackSlotTopDepth = 5
+        self.trackSlotTopDepth = 4.4
         self.trackSlotTopWidth = 2.9
         self.trackSlotDistFromEdge = 3
-        self.trackSlotPeakZ = 5
+        self.trackSlotPeakZ = 3
         self.trackClawBuffer = 0.4
         self.clawOverhang = 0.6
-        self.clawBotExtra = 1.8
+        self.clawBotExtra = 0.1
 
         self.edgeCutTopDiag = self.octoDimTop - 2 * (0.5 ** 0.5) * self.plrPlatformWidth
 
