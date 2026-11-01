@@ -23,7 +23,6 @@ def octo_center_ops_v2(doc, baseOcto):
     if not STGS.mergeTopSlotIntoPillar:
         centerSlotWedge = bulk_fillet(doc, centerSlotWedge, 0.5 * STGS.minThickness, [4, 8])
     centerSlotDist = 0.5 * (STGS.inOctDim + STGS.centerSlotDepth) + STGS.inOctSlotDepth
-    print("centerSlotDist:", centerSlotDist)
     centerSlotLen = STGS.inOctSlotLen - (0 if STGS.mergeTopSlotIntoPillar else STGS.minThickness)
     centerSlotGuide = Part.makeCylinder(0.5 * STGS.minThickness, centerSlotLen)
     centerSlotGuide.rotate(V(0, 0, 0), V(0, 1, 0), 90)

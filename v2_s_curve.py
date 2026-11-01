@@ -26,10 +26,10 @@ def get_s_bridge(for3DPrint):
     cutBuf = 5
     sBridgeDZ = STGS.trackRad + STGS.trackBotZInc
     
-    clawA, clawB = make_claw_v2(cutBuf, sBridgeDZ)
+    clawA, clawB = make_claw_v2(cutBuf, sBridgeDZ, 0.5 * STGS.dz)
     
     bridgeDH = (STGS.trackBotZInc - STGS.trackBotZOut)
-    bridgeH = STGS.dz - bridgeDH
+    bridgeH = 0.5 * STGS.dz - bridgeDH
     sBridge = make_s_tube(STGS.gap - 2 * flatDim, 
                           bridgeH, 
                           flatDim + cutBuf, 
@@ -45,21 +45,22 @@ def get_s_bridge(for3DPrint):
     base.scale(1.020)
     base.translate(V(-dist, 0, 0))
     sBridge = sBridge.cut(base)
-    base.translate(V(dist * 2, 0, STGS.dz))
+    base.translate(V(dist * 2, 0, 0.5 * STGS.dz))
     sBridge = sBridge.cut(base)
 
-    sBridge = uncover_claw(doc, sBridge)
+    sBridge = uncover_claw(doc, sBridge, 0.5 * STGS.dz)
     sBridge = sBridge.removeSplitter()
     return sBridge
 
-if False:
+if True:
     baseOcto = get_cached(doc, "ctcache_baseOcto")
     if baseOcto is None:
-        baseOcto = getOcto_v2(doc, False, True)
+        print("Generating base octo...")
+        baseOcto = getOcto_v2(doc, False, True, True)
         store_cached(doc, "ctcache_baseOcto", baseOcto)
     octoA = baseOcto.Shape.copy()
     octoB = baseOcto.Shape.copy()
     dist = 0.5 * (STGS.gap + STGS.trackSquareTopDim)
     octoA.translate(V(-dist, 0, 0))
-    octoB.translate(V(dist, 0, STGS.dz))
+    octoB.translate(V(dist, 0, 0.5 * STGS.dz))
 rtnPart = get_s_bridge(for3DPrint)

@@ -23,7 +23,7 @@ def make_main_shell(doc):
 
     cornerTopDist = 0.5 * STGS.inOctDim + STGS.inOctSlotDepth
     cornerBotDist = cornerTopDist + STGS.octoCenterCutSlope * STGS.centerSlotH
-    topR = 0.75
+    topR = 0.4
     cornerDist = topR * cornerTopDist + (1 - topR) * cornerBotDist
     cornerCutterBotDim = 100
     cornerCutterTopDim = cornerCutterBotDim + 2 * STGS.octoCenterCutSlope * h

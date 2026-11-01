@@ -1,7 +1,7 @@
 import math
 
 class CargamiaSettingsV2:
-    def __init__(self, mergeTopSlotIntoPillar=False):
+    def __init__(self, mergeTopSlotIntoPillar):
         self.mergeTopSlotIntoPillar = mergeTopSlotIntoPillar
         self.gap = 77
         self.sqrcParam = 3
@@ -68,8 +68,8 @@ class CargamiaSettingsV2:
         self.centerSlotDistTrg = 0.5 * (1 - intersectBotR) * self.topCutBotDim
         self.centerSlotDistTrg += 0.5 * (intersectBotR) * self.topCutDim
         self.inOctDim = 29
-        self.inOctDim2 = 9
-        self.inOctSlotLen = 9
+        self.inOctDim2 = 8
+        self.inOctSlotLen = 8
         self.inOctSlotDepth = 2
         if self.mergeTopSlotIntoPillar:
             self.inOctDim = 34
@@ -88,7 +88,8 @@ class CargamiaSettingsV2:
         self.trackSlotPeakZ = 3
         self.trackClawBuffer = 0.4
         self.clawOverhang = 0.6
-        self.clawBotExtra = 0.1
+        self.clawBotExtra = 1.8
+        self.clawBotH = 1
 
         self.edgeCutTopDiag = self.octoDimTop - 2 * (0.5 ** 0.5) * self.plrPlatformWidth
 
@@ -116,4 +117,4 @@ class CargamiaSettingsV2:
         return interceptB
         
 
-STGS = CargamiaSettingsV2(True)
+STGS = CargamiaSettingsV2(False)

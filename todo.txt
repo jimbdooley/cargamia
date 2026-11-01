@@ -1,3 +1,7 @@
 decide padding for pillar port depth (1 + 2 must equal 3)
 padding for center snap
 padding for track snap
+
+bottom of pillar should have wider to make more minThickness
+
+     

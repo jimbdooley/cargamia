@@ -7,12 +7,13 @@ from my_utils.v2_shape_pillar_port import shape_pillar_port_v2
 from my_utils.wedge_centered_zup import make_wedge_cen_z_up
 from my_utils.make_oct_wedge_cen_z_up import make_octo_wedge_cen_z_up
 from my_utils.v2_cut_track_io_slots import cut_track_io_slots_v2
+from my_utils.v2_dub_right_maker import make_dub_right
 import FreeCAD as App
 import Part
 V = App.Vector
 import math
 
-def getOcto_v2(doc, for3DPrint, slopeFromBot=False):
+def getOcto_v2(doc, for3DPrint, slopeFromBot, addSampleMiddle):
     octoTopW = STGS.octoDim - STGS.octoH * 2 * STGS.defaultSlope
     octoSlabDim = STGS.octoDim + 4
     baseOcto = Part.makeBox(octoSlabDim, octoSlabDim, STGS.octoH)
@@ -129,14 +130,8 @@ def getOcto_v2(doc, for3DPrint, slopeFromBot=False):
     #baseOcto = baseOcto.fuse(marbleCheck)
     #baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
 
-    if True:
-        main_shell, _ = make_main_shell(doc)
-        cut = Part.makeTorus(STGS.trackSquareDim / 2, STGS.trackRad)
-        cutZ = STGS.trackRad + STGS.trackBotZ
-        cut.Placement.Base = V(-STGS.trackSquareDim / 2, -STGS.trackSquareDim / 2, cutZ)
-        main_shell = main_shell.cut(cut)
-        cut.Placement.Base = V(STGS.trackSquareDim / 2, STGS.trackSquareDim / 2, cutZ)
-        main_shell = main_shell.cut(cut)
-        baseOcto = baseOcto.fuse(main_shell)
+    if addSampleMiddle:
+        sample = make_dub_right(doc)
+        baseOcto = baseOcto.fuse(sample)
 
     return baseOcto
