@@ -17,9 +17,8 @@ try:
 except:
     doc = App.newDocument(docName)
 for obj in list(doc.Objects):
-    if obj.Name.startswith("ctcache_"):
-        continue
-    doc.removeObject(obj.Name)
+    if not obj.Name.startswith("ctcache_"):
+        doc.removeObject(obj.Name)
 
 def get_s_bridge(for3DPrint):
     flatDim = 0.5 # portion of s curve that is straight
@@ -55,7 +54,6 @@ def get_s_bridge(for3DPrint):
 if True:
     baseOcto = get_cached(doc, "ctcache_baseOcto")
     if baseOcto is None:
-        print("Generating base octo...")
         baseOcto = getOcto_v2(doc, False, True, True)
         store_cached(doc, "ctcache_baseOcto", baseOcto)
     octoA = baseOcto.Shape.copy()
