@@ -1,4 +1,4 @@
-from my_utils.v2_center_track_utils import get_base_wedge
+from my_utils.v2_center_track_utils import get_base_wedge, fit_track_ends
 from my_utils.v2_make_claw import uncover_claw
 from my_utils.v2_settings import STGS
 from my_utils.simple_cache import get_cached, store_cached
@@ -38,14 +38,7 @@ def get_s_bridge(for3DPrint):
                         [clawA, clawB])
     sBridge.translate(V(-0.5 * STGS.gap - cutBuf, 0, sBridgeDZ))
 
-
-    dist = 0.5 * (STGS.gap + STGS.trackSquareTopDim)
-    base, _, _, _ = get_base_wedge(2)
-    base.scale(1.020)
-    base.translate(V(-dist, 0, 0))
-    sBridge = sBridge.cut(base)
-    base.translate(V(dist * 2, 0, 0.5 * STGS.dz))
-    sBridge = sBridge.cut(base)
+    sBridge = fit_track_ends(sBridge, 0.5 * STGS.dz)
 
     sBridge = uncover_claw(doc, sBridge, 0.5 * STGS.dz)
     sBridge = sBridge.removeSplitter()

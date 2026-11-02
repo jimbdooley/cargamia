@@ -14,8 +14,7 @@ def uncover_claw(doc, part, zDif):
     cutDimTop = cutDimBot + 2 * cutH * STGS.trackSlotSlope
     cut = make_wedge_cen_z_up(cutDimBot, cutDimBot, cutH, cutDimTop, cutDimTop)
     b = STGS.getPathB()
-    bridgeClawGap = 0.2
-    bridgeClawW = 2 * b * STGS.trackSlotSlope - 2 * bridgeClawGap
+    bridgeClawW = 2 * b * STGS.trackSlotSlope - 2 * STGS.bridgeClawGap
     for xSign, ySign in [(1, 1), (-1, 1), (1, -1), (-1, -1)]:
         cutY = ySign * 0.5 * (bridgeClawW + cutDimBot)
         cutX = xSign * (clawDist + 0.5 * cutDimBot - 0.5 * clawBotDepth)
@@ -23,26 +22,26 @@ def uncover_claw(doc, part, zDif):
         part = part.cut(cut.copy())
     return part
 
-def make_claw_v2(cutBuf, dz, zDif):
+def make_base_claw():
     clawH = 15
     clawBotDepth = STGS.trackSlotTopDepth + STGS.clawBotExtra
     clawTopDepth = clawBotDepth + 2 * clawH * STGS.trackSlotSlope
     clawMidDepth = clawBotDepth + 2 * STGS.clawBotH * STGS.trackSlotSlope
 
     b = STGS.getPathB()
-    bridgeClawGap = 0.2
-    bridgeClawW = 2 * b * STGS.trackSlotSlope - 2 * bridgeClawGap
+    yy = (b - 3) * STGS.trackSlotSlope
+    bridgeClawW = 2 * b * STGS.trackSlotSlope - 2 * STGS.bridgeClawGap
     topW = bridgeClawW - 2 * clawH * STGS.trackSlotSlope
     botW = bridgeClawW - 2 * STGS.clawBotH * STGS.trackSlotSlope
-    clawA = make_wedge_cen_z_up(
+    bClaw = make_wedge_cen_z_up(
         clawMidDepth, botW, clawH - STGS.clawBotH, clawTopDepth, topW
     )
     botBotW = botW + 2 * STGS.defaultSlope * STGS.clawBotH
-    clawABot = make_wedge_cen_z_up(
+    bClawBot = make_wedge_cen_z_up(
         clawBotDepth, botBotW, STGS.clawBotH, clawMidDepth, botW
     )
-    clawA.Placement.Base = V(0, 0, STGS.clawBotH)
-    clawA = clawA.fuse(clawABot)
+    bClaw.Placement.Base = V(0, 0, STGS.clawBotH)
+    bClaw = bClaw.fuse(bClawBot)
 
     cutDiff = STGS.minThickness / (1 - STGS.trackSlotSlope)
     cutH = clawH - STGS.minThickness
@@ -52,7 +51,7 @@ def make_claw_v2(cutBuf, dz, zDif):
     clawCut = make_wedge_cen_z_up(
         cutDepth, cutBotW, cutH, cutDepth, cutTopW
     )
-    clawA = clawA.cut(clawCut)
+    bClaw = bClaw.cut(clawCut)
 
     clawNotchH = STGS.baseThickness + 0.05
     topCutDepth = 10
@@ -61,10 +60,13 @@ def make_claw_v2(cutBuf, dz, zDif):
     clawNotch = make_wedge_cen_z_up(botCutDepth, 100, clawNotchH, topCutDepth, 100)
     cutTransX = -0.5 * clawNotchWTop - 0.5 * topCutDepth -(0.5 * STGS.clawBotExtra - STGS.clawOverhang) 
     clawNotch.translate(V(cutTransX, 0, 0))
-    clawA = clawA.cut(clawNotch)
+    bClaw = bClaw.cut(clawNotch)
     clawNotch.translate(V(clawNotchWTop + topCutDepth, 0, 0))
-    clawA = clawA.cut(clawNotch)
+    bClaw = bClaw.cut(clawNotch)
+    return bClaw
 
+def make_claw_v2(cutBuf, dz, zDif):
+    clawA = make_base_claw()
     clawB = clawA.copy()
     clawB.rotate(V(0, 0, 0), V(0, 0, 1), 180)
     clawDist = 0.5 * (STGS.gap + STGS.trackSquareTopDim) - STGS.getPathSlotDist()

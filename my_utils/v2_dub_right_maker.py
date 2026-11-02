@@ -65,13 +65,13 @@ def make_dub_right(doc):
                                 STGS.squareTrackH + STGS.minThickness, 
                                STGS.oWarcleRad, STGS.warcleSlope)
     cenBeam.translate(V(0, 0, STGS.trackBotZ))
-    cenBeam.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+    cenBeam.rotate(V(0, 0, 0), V(0, 0, 1), -45)
     cenBeam.translate(V(0.5 * (cx0 + cx1), 0.5 * (cy0 + cy1), 0))
     main_shell = main_shell.cut(cenBeam)
     cenBeam.translate(V(-(cx0 + cx1), -(cy0 + cy1), 0))
     main_shell = main_shell.cut(cenBeam)
     cenBeam2.translate(V(0, 0, STGS.trackBotZ - STGS.minThickness))
-    cenBeam2.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+    cenBeam2.rotate(V(0, 0, 0), V(0, 0, 1), -45)
     cenBeam2.translate(V(0.5 * (cx0 + cx1), 0.5 * (cy0 + cy1), 0))
     shell_cut = shell_cut.cut(cenBeam2)
     cenBeam2.translate(V(-(cx0 + cx1), -(cy0 + cy1), 0))
@@ -86,7 +86,6 @@ def make_dub_right(doc):
     slotCutTopDX = slotCutDX - 2 * STGS.baseThickness * STGS.defaultSlope
     slotCut = make_wedge_cen_z_up(slotCutDX, slotCutDY, 
                                 STGS.baseThickness, slotCutTopDX, slotCutTopDY)
-
 
     for i in range(2):
         yLoc = 0.5 * STGS.inOctSlotLen - 0.8 + 0.5 * slotCutDY

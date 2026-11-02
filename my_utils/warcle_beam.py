@@ -35,6 +35,7 @@ def make_warcle_beam(length, w, h, botRad, slope):
     wedge.translate(V(0, length, pz))            # put length back on 0..+length, lift to pz
     beam = beam.fuse(wedge)
     beam.Placement.Base = V(0, -0.5 * length, 0)
+    beam.rotate(V(0, 0, 0), V(0, 0, 1), 90)
     return beam
 
 

@@ -25,23 +25,81 @@ for obj in list(doc.Objects):
 def make_straight_right(doc):
     main_shell, shell_cut = make_main_shell(doc)
 
-    torusRad = STGS.trackSquareDim * 0.5
-    cut = make_warcle_torus(torusRad, 2*STGS.trackRad, STGS.squareTrackH, STGS.iWarcleRad, STGS.warcleSlope)
-    cutCut = make_warcle_torus(torusRad, 2*(STGS.trackRad + STGS.minThickness), STGS.squareTrackH + STGS.minThickness, STGS.oWarcleRad, STGS.warcleSlope)
+    hDif = STGS.trackRad - STGS.squareTrackH
+    wAtTop = 2 * STGS.trackRad - 2 * hDif * STGS.warcleSlope
 
-    cut.Placement.Base = V(torusRad, torusRad, STGS.trackBotZ)
-    main_shell = main_shell.cut(cut)
-    cutCut.Placement.Base = V(torusRad, torusRad, STGS.trackBotZ - STGS.minThickness)
-    shell_cut = shell_cut.cut(cutCut)
+    edgeDist = STGS.trackSquareDim * 0.5 - STGS.defaultSlope * (STGS.trackBotZ - STGS.baseThickness)
+    
+    
+    straight = make_warcle_beam(100, wAtTop, STGS.squareTrackH, STGS.iWarcleRad, STGS.warcleSlope)
+    straight2 = make_warcle_beam(100,  wAtTop + 2 * STGS.minThickness, 
+                                STGS.squareTrackH + STGS.minThickness, 
+                               STGS.oWarcleRad, STGS.warcleSlope)
+    straight.translate(V(0, 0, STGS.trackBotZ))
+    straight2.translate(V(0, 0, STGS.trackBotZ - STGS.minThickness))
+    main_shell = main_shell.cut(straight)
+    shell_cut = shell_cut.cut(straight2)
 
-    beam = make_warcle_beam(100, 2 * STGS.trackRad, STGS.squareTrackH, STGS.iWarcleRad, STGS.warcleSlope)
-    beam.translate(V(0, 0, STGS.trackBotZ))
-    main_shell = main_shell.cut(beam)
+    if True:
+        torusRad = 0.80 * edgeDist
+        cut = make_warcle_torus(torusRad, 
+                                wAtTop, 
+                                STGS.squareTrackH, 
+                                STGS.iWarcleRad, 
+                                STGS.warcleSlope,
+                                45)
+        cutCut = make_warcle_torus(torusRad, 
+                                wAtTop + 2 * STGS.minThickness, 
+                                STGS.squareTrackH + STGS.minThickness, 
+                                STGS.oWarcleRad, 
+                                STGS.warcleSlope,
+                                45)
+        
+        for i in range(2):
+            cut.rotate(V(0, 0, 0), V(0, 0, 1), 180)
+            cutCut.rotate(V(0, 0, 0), V(0, 0, 1), 180)
+            sign = 1 if i == 0 else -1
+            cut.Placement.Base = V(sign * torusRad, sign * edgeDist, STGS.trackBotZ)
+            if i == 0: main_shell = main_shell.cut(cut)
+            cutCut.Placement.Base = V(sign * torusRad, sign * edgeDist, STGS.trackBotZ - STGS.minThickness)
+            if i == 0: shell_cut = shell_cut.cut(cutCut)
+        cut.Placement.Base = V(0, 0, 0)
+        cut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+        cutCut.Placement.Base = V(0, 0, 0)
+        cutCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
+        for i in range(2):
+            cut.rotate(V(0, 0, 0), V(0, 0, 1), 180)
+            cutCut.rotate(V(0, 0, 0), V(0, 0, 1), 180)
+            sign = 1 if i == 0 else -1
+            cut.Placement.Base = V(sign * edgeDist, sign * torusRad, STGS.trackBotZ)
+            if i == 0: main_shell = main_shell.cut(cut)
+            cutCut.Placement.Base = V(sign * edgeDist, sign * torusRad, STGS.trackBotZ - STGS.minThickness)
+            if i == 0: shell_cut = shell_cut.cut(cutCut)
 
-    outerW = 2 * (STGS.trackRad + STGS.minThickness)
-    beam2 = make_warcle_beam(100, outerW, STGS.squareTrackH, STGS.oWarcleRad, STGS.warcleSlope)
-    beam2.translate(V(0, 0, STGS.trackBotZ - STGS.minThickness))
-    shell_cut = shell_cut.cut(beam2)
+        cx0 = edgeDist - torusRad * math.cos(math.radians(45))
+        cy0 = torusRad - torusRad * math.sin(math.radians(45))
+        cx1 = cy0
+        cy1 = cx0
+        cenDist = math.sqrt((cx0-cx1)**2 + (cy0-cy1)**2)
+        cenBeam = make_warcle_beam(cenDist, wAtTop, 
+                                STGS.squareTrackH, 
+                                STGS.iWarcleRad, STGS.warcleSlope)
+        cenBeam2 = make_warcle_beam(cenDist,  wAtTop + 2 * STGS.minThickness, 
+                                    STGS.squareTrackH + STGS.minThickness, 
+                                STGS.oWarcleRad, STGS.warcleSlope)
+        cenBeam.translate(V(0, 0, STGS.trackBotZ))
+        cenBeam.rotate(V(0, 0, 0), V(0, 0, 1), -45)
+        cenBeam.translate(V(0.5 * (cx0 + cx1), 0.5 * (cy0 + cy1), 0))
+        main_shell = main_shell.cut(cenBeam)
+        cenBeam.translate(V(-(cx0 + cx1), -(cy0 + cy1), 0))
+        #main_shell = main_shell.cut(cenBeam)
+        cenBeam2.translate(V(0, 0, STGS.trackBotZ - STGS.minThickness))
+        cenBeam2.rotate(V(0, 0, 0), V(0, 0, 1), -45)
+        cenBeam2.translate(V(0.5 * (cx0 + cx1), 0.5 * (cy0 + cy1), 0))
+        shell_cut = shell_cut.cut(cenBeam2)
+        cenBeam2.translate(V(-(cx0 + cx1), -(cy0 + cy1), 0))
+        #shell_cut = shell_cut.cut(cenBeam2)
+        
 
     main_shell = main_shell.cut(shell_cut)
 

@@ -16,7 +16,7 @@ class CargamiaSettingsV2:
         self.defaultSlope = math.tan(math.radians(self.defaultDraftAngle))
         self.octoEnterAngle = 6
         self.octoEnterSlope = math.tan(math.radians(self.octoEnterAngle))
-        self.octoCenterCutAngle = 12
+        self.octoCenterCutAngle = 8
         self.octoCenterCutSlope = math.tan(math.radians(self.octoCenterCutAngle))
         self.defaultTrackH = 5
         self.squareTrackH = 6
@@ -44,7 +44,8 @@ class CargamiaSettingsV2:
         self.plrSlotTopWidth = self.plrPlatformWidth - 2 * self.pillarPortTopEdgeThickness
         self.plrSlotTopDepth = self.plrPlatformDepth - 2 * self.minThickness
         self.plrSlotPinsarLen = 3.1
-
+        self.plrSqueezeMM = 0.05
+        self.plrCutGuideDim = 0.3
 
         self.octoDim = 52
         self.octoH = 2 * self.plrPortDepth + self.plrZGap
@@ -90,6 +91,7 @@ class CargamiaSettingsV2:
         self.clawOverhang = 0.6
         self.clawBotExtra = 1.8
         self.clawBotH = 1
+        self.bridgeClawGap = 0.1
 
         self.edgeCutTopDiag = self.octoDimTop - 2 * (0.5 ** 0.5) * self.plrPlatformWidth
 

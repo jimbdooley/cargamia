@@ -3,15 +3,18 @@ import FreeCAD as App
 import FreeCADGui
 
 PROJECT = r"C:\Users\james\Documents\misc_projects\cargamia"
+if True: # linux
+    PROJECT = r"/home/james/Documents/misc_projects/cargamia"
+
 scripts = [
-    r"\v2_pillar.py",
-    r"\v2_octo.py",
-    r"\v2_centrack_dub_right.py",
-    r"\v2_s_curve.py",
-    r"\v3_straight_right.py",
-    r"\v3_click_track.py",
+    r"/v2_pillar.py",
+    r"/v2_octo.py",
+    r"/v2_centrack_dub_right.py",
+    r"/v2_s_curve.py",
+    r"/v3_straight_right.py",
+    r"/v3_click_track.py",
 ]
-SCRIPT = PROJECT + scripts[5]
+SCRIPT = PROJECT + scripts[1]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):
@@ -31,7 +34,7 @@ res = runpy.run_path(
 Part.show(res["rtnPart"])
 for optPart in ["octoA", "octoB"]:
     if optPart in res:
-        break
+        
         Part.show(res[optPart])
 
 App.ActiveDocument.recompute()

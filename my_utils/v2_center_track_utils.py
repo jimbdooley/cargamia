@@ -14,6 +14,16 @@ def get_base_wedge(hScale=1.0):
     base = make_wedge_cen_z_up( botW, botW, h, topW, topW )
     return base, h, botW, topW
 
+def fit_track_ends(part, dz):
+    dist = 0.5 * (STGS.gap + STGS.trackSquareTopDim)
+    base, _, _, _ = get_base_wedge(2)
+    base.scale(1.020)
+    base.translate(V(-dist, 0, 0))
+    part = part.cut(base)
+    base.translate(V(dist * 2, 0, dz))
+    part = part.cut(base)
+    return part
+
 def make_main_shell(doc):
     base, h, botW, topW = get_base_wedge(1.0)
     cutDiff = STGS.minThickness / math.cos(math.radians(STGS.defaultDraftAngle))

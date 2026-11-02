@@ -23,4 +23,4 @@ def getPillar_v2(for3DPrint, n):
     rtn = Part.makeBox(STGS.plrWidth, thickness, plrHeight)  # Example placeholder for the pillar part
     return rtn
 
-rtnPart = getPillar_v2(for3DPrint, 1)
+rtnPart = getPillar_v2(for3DPrint, 2.5)

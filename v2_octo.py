@@ -15,7 +15,7 @@ for obj in list(doc.Objects):
     doc.removeObject(obj.Name)
 
 
-octo = getOcto_v2(doc, for3DPrint, True, True)
+octo = getOcto_v2(doc, for3DPrint, True, False)
 
 
 rtnPart = octo
