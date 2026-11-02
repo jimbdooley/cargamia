@@ -45,6 +45,8 @@ def make_straight_right(doc):
     straightCut.rotate(V(0, 0, 0), V(0, 0, 1), scRads * 180 / math.pi)
     straightCut.translate(V( -hscDim * math.cos(scRads), 6+hscDim * math.sin(scRads), STGS.trackBotZ))
     straight = straight.cut(straightCut)
+    straightCut.translate(V(0, STGS.minThickness, 0))
+    straight2 = straight2.cut(straightCut)
     #return straight
     main_shell = main_shell.cut(straight)
     shell_cut = shell_cut.cut(straight2)
