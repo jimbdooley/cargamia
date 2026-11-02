@@ -45,7 +45,7 @@ class CargamiaSettingsV2:
         self.plrSlotTopDepth = self.plrPlatformDepth - 2 * self.minThickness
         self.plrSlotPinsarLen = 3.1
         self.plrSqueezeMM = 0.05
-        self.plrCutGuideDim = 0.3
+        self.plrCutGuideDim = 0.4
 
         self.octoDim = 52
         self.octoH = 2 * self.plrPortDepth + self.plrZGap

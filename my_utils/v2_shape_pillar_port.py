@@ -8,7 +8,9 @@ V = App.Vector
 import math
 
 def shape_pillar_port_v2(doc, baseOcto):
-        #cut slot holes in pillar port
+        #cut slot holes in pillar 
+    rad = 0.25 * (STGS.octoDim + STGS.octoDim2) - math.sqrt(0.5) * 0.5 * STGS.plrPlatformDepth
+    rad -= math.sqrt(0.5) * STGS.octoH * STGS.defaultSlope
     for i in range(2):
         baseOcto.rotate(V(0, 0, 0.5 * STGS.octoH), V(0, 1, 0), 180)
         slotCutBotW = STGS.plrSlotTopWidth - 2 * STGS.plrSlotSlope * STGS.plrPortDepth
@@ -21,8 +23,6 @@ def shape_pillar_port_v2(doc, baseOcto):
         pinsCut = make_wedge_cen_z_up(
             pinsCutW, STGS.plrSlotTopDepth, STGS.plrPortDepth,
             pinsCutBotW, slotCutBotL)
-        rad = 0.25 * (STGS.octoDim + STGS.octoDim2) - math.sqrt(0.5) * 0.5 * STGS.plrPlatformDepth
-        rad -= math.sqrt(0.5) * STGS.octoH * STGS.defaultSlope
         pinsRad = rad + slotCutBotL * math.sqrt(0.5)
         slotCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
         pinsCut.rotate(V(0, 0, 0), V(0, 0, 1), 45)
@@ -53,12 +53,14 @@ def shape_pillar_port_v2(doc, baseOcto):
             indent.Placement.Base = V(xSign * indentRad, ySign * indentRad, 0)
             baseOcto = baseOcto.fuse(indent.copy())
 
+    for i in range(2):
+        baseOcto.rotate(V(0, 0, 0.5 * STGS.octoH), V(0, 1, 0), 180)
         slotHelperDepth = 2 * STGS.plrCutGuideDim + STGS.plrThickness - STGS.plrSqueezeMM
         slotHelperDepth += 2 * STGS.plrPortDepth * STGS.plrSlotSlope
         slotHelperWidth = STGS.plrPlatformWidth - 2 * STGS.pillarPortTopEdgeThickness
         slotHelperBotDepth = slotHelperDepth -  2 * STGS.plrCutGuideDim
-        slotHelperBotDepth -= 4 * STGS.plrPortDepth * STGS.plrSlotSlope
-        slotHelperBotWidth = slotHelperWidth -  2 * STGS.plrCutGuideDim * STGS.plrSlotSlope
+        slotHelperBotDepth -= 2 * STGS.plrPortDepth * STGS.plrSlotSlope
+        slotHelperBotWidth = slotHelperWidth -  4 * STGS.plrCutGuideDim * STGS.plrSlotSlope
         slotHelper = make_wedge_cen_z_up(slotHelperBotWidth, slotHelperBotDepth,
                                          2 * STGS.plrCutGuideDim, 
                                          slotHelperWidth, slotHelperDepth)

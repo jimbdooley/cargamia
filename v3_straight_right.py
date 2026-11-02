@@ -37,11 +37,20 @@ def make_straight_right(doc):
                                STGS.oWarcleRad, STGS.warcleSlope)
     straight.translate(V(0, 0, STGS.trackBotZ))
     straight2.translate(V(0, 0, STGS.trackBotZ - STGS.minThickness))
+    hscDim = 50
+    scDimBot = 2 * hscDim + 2 * STGS.warcleSlope * STGS.squareTrackH
+    straightCut = make_wedge_cen_z_up(scDimBot, scDimBot, 
+                                      STGS.squareTrackH, 2 * hscDim, 2 * hscDim)
+    scRads = math.atan(15) # 15 is just an eyeballed value
+    straightCut.rotate(V(0, 0, 0), V(0, 0, 1), scRads * 180 / math.pi)
+    straightCut.translate(V( -hscDim * math.cos(scRads), 6+hscDim * math.sin(scRads), STGS.trackBotZ))
+    straight = straight.cut(straightCut)
+    #return straight
     main_shell = main_shell.cut(straight)
     shell_cut = shell_cut.cut(straight2)
 
     if True:
-        torusRad = 0.80 * edgeDist
+        torusRad = 0.60 * edgeDist
         cut = make_warcle_torus(torusRad, 
                                 wAtTop, 
                                 STGS.squareTrackH, 
@@ -127,6 +136,13 @@ def make_straight_right(doc):
     randDist = 0.5 * STGS.trackSquareTopDim + STGS.baseThickness * STGS.defaultSlope
     randCut.Placement.Base = V(0, randDist + 0.5 * randDim, 0)
     main_shell = main_shell.cut(randCut)
+
+    topCutDim = 100
+    topCut = Part.makeBox(topCutDim, topCutDim, topCutDim)
+    h = STGS.trackBotZ + STGS.squareTrackH
+    topCut.translate(V(-topCutDim, 3, h-2))
+    main_shell = main_shell.cut(topCut)
+
     return main_shell
 
 
