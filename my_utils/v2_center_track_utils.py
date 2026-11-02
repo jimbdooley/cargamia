@@ -14,8 +14,9 @@ def get_base_wedge(hScale=1.0):
     base = make_wedge_cen_z_up( botW, botW, h, topW, topW )
     return base, h, botW, topW
 
-def fit_track_ends(part, dz):
-    dist = 0.5 * (STGS.gap + STGS.trackSquareTopDim)
+def fit_track_ends(part, dz, _trackLen=None):
+    trackLen = _trackLen if _trackLen is not None else STGS.gap
+    dist = 0.5 * (trackLen + STGS.trackSquareTopDim)
     base, _, _, _ = get_base_wedge(2)
     base.scale(1.020)
     base.translate(V(-dist, 0, 0))

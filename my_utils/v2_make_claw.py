@@ -5,11 +5,44 @@ import Part
 import math
 V = App.Vector
 
-def uncover_claw(doc, part, zDif):
+def softenClaw(part, trackLen, zTop):
+    softenerH = 2.2
+    softenerW = 30
+    sDimBot = softenerW - 2 * softenerH
+    softener = make_wedge_cen_z_up(sDimBot, sDimBot, softenerH, softenerW, softenerW)
+    softDist = 0.5 * (trackLen + softenerW) + 1 - softenerH
+    for xSign in [1, -1]:
+        softener.Placement.Base = V(xSign * softDist, 0, zTop - softenerH)
+        part = part.cut(softener)
+    return part
+
+
+def uncover_claw_short(part, trackLen, innerH):
     cutDimBot = 30
     cutH = 20
     clawBotDepth = STGS.trackSlotTopDepth + STGS.clawBotExtra
-    clawDist = 0.5 * (STGS.gap + STGS.trackSquareTopDim) - STGS.getPathSlotDist()
+    clawDist = 0.5 * (trackLen + STGS.trackSquareTopDim) - STGS.getPathSlotDist()
+    clawDist -= (0.5 * STGS.clawBotExtra - STGS.clawOverhang) 
+    cutDimTop = cutDimBot + 2 * cutH * STGS.trackSlotSlope
+    cut = make_wedge_cen_z_up(cutDimBot, cutDimBot, cutH, cutDimTop, cutDimTop)
+    b = STGS.getPathB()
+    bridgeClawW = 2 * b * STGS.trackSlotSlope - 2 * STGS.bridgeClawGap
+    for xSign, ySign in [(1, 1), (-1, 1), (1, -1), (-1, -1)]:
+        cutY = ySign * 0.5 * (bridgeClawW + cutDimBot)
+        cutX = xSign * (clawDist + 0.5 * cutDimBot - 0.5 * clawBotDepth)
+        cut.Placement.Base = V(cutX, cutY, 0)
+        part = part.cut(cut.copy())
+        cut.Placement.Base = V(0, cutY, 0)
+        part = part.cut(cut.copy())
+    part = softenClaw(part, trackLen, innerH + STGS.trackBotZ)
+    return part
+
+def uncover_claw(part, zDif, _trackLen=None):
+    trackLen = STGS.gap if _trackLen is None else _trackLen
+    cutDimBot = 30
+    cutH = 20
+    clawBotDepth = STGS.trackSlotTopDepth + STGS.clawBotExtra
+    clawDist = 0.5 * (trackLen + STGS.trackSquareTopDim) - STGS.getPathSlotDist()
     clawDist -= (0.5 * STGS.clawBotExtra - STGS.clawOverhang) 
     cutDimTop = cutDimBot + 2 * cutH * STGS.trackSlotSlope
     cut = make_wedge_cen_z_up(cutDimBot, cutDimBot, cutH, cutDimTop, cutDimTop)

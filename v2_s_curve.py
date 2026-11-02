@@ -40,7 +40,7 @@ def get_s_bridge(for3DPrint):
 
     sBridge = fit_track_ends(sBridge, 0.5 * STGS.dz)
 
-    sBridge = uncover_claw(doc, sBridge, 0.5 * STGS.dz)
+    sBridge = uncover_claw(sBridge, 0.5 * STGS.dz)
     sBridge = sBridge.removeSplitter()
     return sBridge
 

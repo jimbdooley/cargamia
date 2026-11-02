@@ -75,7 +75,7 @@ def get_click_track(for3DPrint, n):
 
     clickTrack = fit_track_ends(clickTrack, 0.5 * STGS.dz)
     
-    clickTrack = uncover_claw(doc, clickTrack, 0.5 * STGS.dz)
+    clickTrack = uncover_claw(clickTrack, 0.5 * STGS.dz)
     clickTrack = clickTrack.removeSplitter()
     return clickTrack
 
