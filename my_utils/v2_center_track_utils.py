@@ -14,16 +14,24 @@ def get_base_wedge(hScale=1.0):
     base = make_wedge_cen_z_up( botW, botW, h, topW, topW )
     return base, h, botW, topW
 
+def _fit_track_ends_helper(part, dz, p1, p2):
+    base, _, _, _ = get_base_wedge(2)
+    base.scale(1.020)
+    base.translate(V(p1[0], p1[1], 0))
+    part = part.cut(base)
+    base.translate(V(p2[0] - p1[0], p2[1] - p1[1], dz))
+    part = part.cut(base)
+    return part
+
+def fit_track_ends_right(part, dz, _trackLen=None):
+    trackLen = _trackLen if _trackLen is not None else STGS.gap
+    dist = 0.5 * (trackLen + STGS.trackSquareTopDim)
+    return _fit_track_ends_helper(part, dz, (-dist, 0), (0, dist))
+
 def fit_track_ends(part, dz, _trackLen=None):
     trackLen = _trackLen if _trackLen is not None else STGS.gap
     dist = 0.5 * (trackLen + STGS.trackSquareTopDim)
-    base, _, _, _ = get_base_wedge(2)
-    base.scale(1.020)
-    base.translate(V(-dist, 0, 0))
-    part = part.cut(base)
-    base.translate(V(dist * 2, 0, dz))
-    part = part.cut(base)
-    return part
+    return _fit_track_ends_helper(part, dz, (-dist, 0), (dist, 0))
 
 def make_main_shell(doc):
     base, h, botW, topW = get_base_wedge(1.0)
@@ -34,7 +42,7 @@ def make_main_shell(doc):
 
     cornerTopDist = 0.5 * STGS.inOctDim + STGS.inOctSlotDepth
     cornerBotDist = cornerTopDist + STGS.octoCenterCutSlope * STGS.centerSlotH
-    topR = 0.4
+    topR = STGS.squareSqueezeR
     cornerDist = topR * cornerTopDist + (1 - topR) * cornerBotDist
     cornerCutterBotDim = 100
     cornerCutterTopDim = cornerCutterBotDim + 2 * STGS.octoCenterCutSlope * h

@@ -14,8 +14,9 @@ scripts = [
     r"/v3_straight_right.py",
     r"/v3_click_track.py",
     r"/v4_short_bridge.py",
+    r"/v4_right_bridge.py",
 ]
-SCRIPT = PROJECT + scripts[6]
+SCRIPT = PROJECT + scripts[7]
 
 sys.path.insert(0, PROJECT)
 for name, mod in list(sys.modules.items()):

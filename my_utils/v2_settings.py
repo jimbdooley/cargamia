@@ -4,6 +4,7 @@ class CargamiaSettingsV2:
     def __init__(self, mergeTopSlotIntoPillar):
         self.mergeTopSlotIntoPillar = mergeTopSlotIntoPillar
         self.gap = 77
+        self.squareSqueezeR = 0.6 # how tight square grips are
         self.sqrcParam = 3
         self.marbleDiam = 11
         self.marbleDiamMax = 13
