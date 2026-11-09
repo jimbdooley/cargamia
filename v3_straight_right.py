@@ -23,7 +23,7 @@ for obj in list(doc.Objects):
     doc.removeObject(obj.Name)
 
 def make_straight_right(doc):
-    main_shell, shell_cut = make_main_shell(doc)
+    main_shell, shell_cut = make_main_shell(STGS.defaultSlope)
 
     hDif = STGS.trackRad - STGS.squareTrackH
     wAtTop = 2 * STGS.trackRad - 2 * hDif * STGS.warcleSlope

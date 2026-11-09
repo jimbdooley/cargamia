@@ -1,6 +1,3 @@
-from my_utils.make_base_square import get_base_square, trim_cut_bot_base_square
-from my_utils.bulk_fillet import bulk_fillet
-from my_utils.v2_center_track_utils import make_main_shell
 from my_utils.v2_settings import STGS
 from my_utils.v2_octo_center_ops import octo_center_ops_v2
 from my_utils.v2_shape_pillar_port import shape_pillar_port_v2
@@ -131,7 +128,7 @@ def getOcto_v2(doc, for3DPrint, slopeFromBot, addSampleMiddle):
     #baseOcto.rotate(V(0, 0, 0), V(0, 0, 1), 45)
 
     if addSampleMiddle:
-        sample = make_dub_right(doc)
+        sample = make_dub_right(STGS.defaultSlope)
         baseOcto = baseOcto.fuse(sample)
 
     return baseOcto

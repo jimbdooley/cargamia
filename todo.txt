@@ -1,7 +1,6 @@
-decide padding for pillar port depth (1 + 2 must equal 3)
-padding for center snap
-padding for track snap
+center square should have sloped feet for easier insert begin
 
-bottom of pillar should have wider to make more minThickness
+base octo still needs to make cavitiy in thick areas per protolabs advice (i belive just botom of pillar)
 
-     
+also, the edge divits should have steeper angles to ultimately improve plastic strength
+

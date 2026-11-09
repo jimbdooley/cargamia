@@ -11,9 +11,9 @@ import Part
 V = App.Vector
 import math
 
-def make_dub_right(doc):
-    main_shell, shell_cut = make_main_shell(doc)
-
+def make_dub_right(mainSlope):
+    main_shell, shell_cut = make_main_shell(mainSlope)
+    return main_shell.cut(shell_cut)
     hDif = STGS.trackRad - STGS.squareTrackH
     wAtTop = 2 * STGS.trackRad - 2 * hDif * STGS.warcleSlope
 
@@ -102,5 +102,17 @@ def make_dub_right(doc):
     randDist = 0.5 * STGS.trackSquareTopDim + STGS.baseThickness * STGS.defaultSlope
     randCut.Placement.Base = V(0, randDist + 0.5 * randDim, 0)
     main_shell = main_shell.cut(randCut)
+
+
+    topCutDim = 100
+    topCut = Part.makeBox(topCutDim, topCutDim, topCutDim)
+    h = STGS.trackBotZ + STGS.squareTrackH
+    topCut.translate(V(4, 4, h-2))
+    main_shell = main_shell.cut(topCut)
+    topCut.translate(V(-topCutDim-8, -topCutDim-8, 0))
+    main_shell = main_shell.cut(topCut)
+
+
+
     main_shell = main_shell.removeSplitter()
     return main_shell

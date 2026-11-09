@@ -1,6 +1,7 @@
 from my_utils.v2_dub_right_maker import make_dub_right
 from my_utils.simple_cache import get_cached, store_cached
 from my_utils.v2_get_octo import getOcto_v2
+from my_utils.v2_settings import STGS
 import FreeCAD as App
 import Part
 V = App.Vector
@@ -18,7 +19,7 @@ for obj in list(doc.Objects):
         continue
     doc.removeObject(obj.Name)
 
-dr = make_dub_right(doc)
+dr = make_dub_right(STGS.defaultSlope)
 
 if False:
     baseOcto = get_cached(doc, "ctcache_baseOcto")

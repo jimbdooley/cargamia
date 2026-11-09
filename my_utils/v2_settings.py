@@ -4,7 +4,7 @@ class CargamiaSettingsV2:
     def __init__(self, mergeTopSlotIntoPillar):
         self.mergeTopSlotIntoPillar = mergeTopSlotIntoPillar
         self.gap = 77
-        self.squareSqueezeR = 0.6 # how tight square grips are
+        self.squareSqueezeR = 0.4 # how tight square grips are
         self.sqrcParam = 3
         self.marbleDiam = 11
         self.marbleDiamMax = 13
@@ -20,7 +20,7 @@ class CargamiaSettingsV2:
         self.octoCenterCutAngle = 8
         self.octoCenterCutSlope = math.tan(math.radians(self.octoCenterCutAngle))
         self.defaultTrackH = 5
-        self.squareTrackH = 6
+        self.squareTrackH = 5
         self.trackBotZ = self.baseThickness + 1.1 + self.minThickness
         self.trackBotZInc = self.trackBotZ + 0.5
         self.trackBotZOut = self.trackBotZ - 0.5
